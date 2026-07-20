@@ -2,9 +2,11 @@
 
 namespace App\Controllers;
 
+use App\Libraries\TransferFeeCalculator;
 use App\Models\BaremeModel;
 use App\Models\ClientModel;
 use App\Models\CompteModel;
+use App\Models\PrefixeModel;
 use App\Models\TransactionsModel;
 use App\Models\TypeOperationModel;
 use RuntimeException;
@@ -28,6 +30,7 @@ class ClientController extends BaseController
     private ClientModel $clientModel;
     private TypeOperationModel $typeOperationModel;
     private BaremeModel $baremeModel;
+    private PrefixeModel $prefixeModel;
 
     public function __construct()
     {
@@ -36,6 +39,7 @@ class ClientController extends BaseController
         $this->clientModel = new ClientModel();
         $this->typeOperationModel = new TypeOperationModel();
         $this->baremeModel = new BaremeModel();
+        $this->prefixeModel = new PrefixeModel();
     }
 
     /**
@@ -193,7 +197,7 @@ class ClientController extends BaseController
         $telephoneDest = trim((string) $this->request->getPost('telephone'));
         $montant = (float) $this->request->getPost('montant');
 
-        if (!preg_match('/^0(32|33|34|37|38)\d{7}$/', $telephoneDest)) {
+        if (!preg_match('/^0\d{9}$/', $telephoneDest)) {
             return redirect()->to('/client/dashboard')->with('error', 'Numéro de téléphone destinataire invalide.');
         }
 
@@ -204,6 +208,11 @@ class ClientController extends BaseController
         $compteSource = $this->compteActuel();
         if (!$compteSource) {
             return redirect()->to('/client/dashboard')->with('error', 'Compte introuvable.');
+        }
+
+        $prefixeDest = $this->prefixeModel->getPrefixeByNumber($telephoneDest);
+        if (!$prefixeDest || (int) ($prefixeDest['actif'] ?? 0) !== 1) {
+            return redirect()->to('/client/dashboard')->with('error', 'Ce préfixe d’opérateur n’est pas valide ou non supporté.');
         }
 
         $clientDest = $this->clientModel->getClientByTelephone($telephoneDest);
@@ -217,7 +226,7 @@ class ClientController extends BaseController
 
         try {
             $idTypeTransfert = 3;
-            $frais = $this->calculerFrais($idTypeTransfert, $montant);
+            $frais = $this->calculerFraisTransfert($idTypeTransfert, $montant, $prefixeDest);
         } catch (RuntimeException $e) {
             return redirect()->to('/client/dashboard')->with('error', $e->getMessage());
         }
@@ -345,6 +354,13 @@ class ClientController extends BaseController
         }
 
         return (float) $bareme['frais'];
+    }
+
+    private function calculerFraisTransfert(int $idTypeOperation, float $montant, ?array $prefixeDestination): float
+    {
+        $fraisBase = $this->calculerFrais($idTypeOperation, $montant);
+
+        return TransferFeeCalculator::calculateFee($fraisBase, $prefixeDestination);
     }
 
     private function jsonError(string $message, int $statusCode = 400)

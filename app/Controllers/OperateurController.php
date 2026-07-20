@@ -79,11 +79,17 @@ class OperateurController extends BaseController
     {
         $gainRetrait = $this->transactionModel->getGainByRetrait();
         $gainTransfert = $this->transactionModel->getGainByTransfert();
+        $gainTransfertOperateur = $this->transactionModel->getGainByTransfertForOperatorType(0);
+        $gainTransfertAutresOperateurs = $this->transactionModel->getGainByTransfertForOperatorType(1);
+        $gainBreakdown = $this->transactionModel->getTransferGainBreakdown();
 
         $data = [
             'gainRetrait' => $gainRetrait['frais'] ?? 0,
             'gainTransfert' => $gainTransfert['frais'] ?? 0,
-            'gainTotal' => ($gainRetrait['frais'] ?? 0) + ($gainTransfert['frais'] ?? 0)
+            'gainTransfertOperateur' => $gainTransfertOperateur['frais'] ?? 0,
+            'gainTransfertAutresOperateurs' => $gainTransfertAutresOperateurs['frais'] ?? 0,
+            'gainTotal' => ($gainRetrait['frais'] ?? 0) + ($gainTransfert['frais'] ?? 0),
+            'gainBreakdown' => $gainBreakdown,
         ];
 
         return view('operateur/gains', $data);
@@ -213,12 +219,17 @@ class OperateurController extends BaseController
     public function addPrefix()
     {
         $prefixeModel = new PrefixeModel();
+        $estAutreOperateur = (int) $this->request->getPost('est_autre_operateur');
+        $pourcentageExtra = (float) $this->request->getPost('pourcentage_extra');
+
         $data = [
             'prefixe' => $this->request->getPost('prefixe'),
-            'actif' => $this->request->getPost('actif')
+            'actif' => $this->request->getPost('actif'),
+            'est_autre_operateur' => $estAutreOperateur,
+            'pourcentage_extra' => $estAutreOperateur === 1 ? $pourcentageExtra : 0.0,
         ];
         $prefixeModel->addPrefix($data);
-        return redirect()->to('/operateur/prefixes');
+        return redirect()->to('/operateur/prefixes')->with('success', 'Préfixe ajouté avec succès.');
     }
 
     public function addFormPrefix()
@@ -235,9 +246,14 @@ class OperateurController extends BaseController
             return redirect()->to('/operateur/prefixes')->with('error', 'Préfixe introuvable.');
         }
 
+        $estAutreOperateur = (int) $this->request->getPost('est_autre_operateur');
+        $pourcentageExtra = (float) $this->request->getPost('pourcentage_extra');
+
         $data = [
             'prefixe' => $this->request->getPost('prefixe'),
-            'actif' => $this->request->getPost('actif')
+            'actif' => $this->request->getPost('actif'),
+            'est_autre_operateur' => $estAutreOperateur,
+            'pourcentage_extra' => $estAutreOperateur === 1 ? $pourcentageExtra : 0.0,
         ];
 
         $prefixeModel->updatePrefix($id, $data);

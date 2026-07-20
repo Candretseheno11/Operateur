@@ -1,0 +1,3 @@
+Transactions Model
+ [x] Get gain by transfert for operator type returns array without throwing
+

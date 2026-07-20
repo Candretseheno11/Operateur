@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="TransactionsModelTest" file="/home/christon/Code/Examen_Rojo/Regime/tests/unit/TransactionsModelTest.php" tests="1" assertions="2" errors="0" failures="0" skipped="0" time="0.024505">
+    <testcase name="testGetGainByTransfertForOperatorTypeReturnsArrayWithoutThrowing" file="/home/christon/Code/Examen_Rojo/Regime/tests/unit/TransactionsModelTest.php" line="11" class="TransactionsModelTest" classname="TransactionsModelTest" assertions="2" time="0.024505"/>
+  </testsuite>
+</testsuites>

@@ -58,6 +58,8 @@ $routes->group('operateur', function ($routes) {
     $routes->get('prefixes', 'OperateurController::prefixes');
     $routes->get('prefixes/add', 'OperateurController::addFormPrefix');
     $routes->post('prefixes/add', 'OperateurController::addPrefix');
+    $routes->get('prefixes/edit/(:num)', 'OperateurController::editFormPrefix/$1');
+    $routes->post('prefixes/update/(:num)', 'OperateurController::editPrefix/$1');
     $routes->get('prefixes/delete/(:num)', 'OperateurController::deletePrefix/$1');
 });
 // Garder aussi les routes directes si vous préférez y accéder sans le préfixe /client/ dans l'URL

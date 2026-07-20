@@ -7,7 +7,9 @@ CREATE TABLE
     prefixes (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         prefixe TEXT NOT NULL UNIQUE,
-        actif INTEGER NOT NULL DEFAULT 1
+        actif INTEGER NOT NULL DEFAULT 1,
+        est_autre_operateur INTEGER NOT NULL DEFAULT 0,
+        pourcentage_extra NUMERIC NOT NULL DEFAULT 0
     );
 
 --------------------------------------------------
@@ -92,10 +94,12 @@ WHERE
 -- INSERT PREFIXES
 --------------------------------------------------
 INSERT INTO
-    prefixes (prefixe)
+    prefixes (prefixe, est_autre_operateur, pourcentage_extra)
 VALUES
-    ('033'),
-    ('037');
+    ('033', 0, 0),
+    ('037', 0, 0),
+    ('031', 1, 5),
+    ('032', 1, 8);
 
 --------------------------------------------------
 -- TYPES D'OPERATIONS

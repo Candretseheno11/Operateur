@@ -8,7 +8,7 @@ class PrefixeModel extends Model
 {
     protected $table = 'prefixes';
     protected $primaryKey = 'id';
-    protected $allowedFields = ['prefixe', 'actif'];
+    protected $allowedFields = ['prefixe', 'actif', 'est_autre_operateur', 'pourcentage_extra'];
 
     // La table SQLite actuelle ne contient pas de colonnes created_at/updated_at.
     // On désactive donc les timestamps automatiques pour éviter l'erreur lors de l'insertion.
@@ -18,6 +18,8 @@ class PrefixeModel extends Model
     protected $validationRules = [
         'prefixe' => 'required|is_unique[prefixes.prefixe,id,{id}]',
         'actif' => 'permit_empty|in_list[0,1]',
+        'est_autre_operateur' => 'permit_empty|in_list[0,1]',
+        'pourcentage_extra' => 'permit_empty|numeric',
     ];
 
     protected $validationMessages = [
@@ -27,6 +29,12 @@ class PrefixeModel extends Model
         ],
         'actif' => [
             'in_list' => 'État invalide',
+        ],
+        'est_autre_operateur' => [
+            'in_list' => 'Type de préfixe invalide',
+        ],
+        'pourcentage_extra' => [
+            'numeric' => 'Le pourcentage supplémentaire doit être numérique',
         ],
     ];
 
