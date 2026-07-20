@@ -18,6 +18,7 @@ CREATE TABLE
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         telephone TEXT NOT NULL UNIQUE,
         nom TEXT,
+        role TEXT CHECK (role IN ('client', 'operateur')) DEFAULT 'client',
         date_creation DATETIME DEFAULT CURRENT_TIMESTAMP,
         id_prefixe INTEGER NOT NULL,
         FOREIGN KEY (id_prefixe) REFERENCES prefixes (id)
@@ -73,6 +74,19 @@ CREATE TABLE
         FOREIGN KEY (id_compte_destination) REFERENCES comptes (id),
         FOREIGN KEY (id_type_operation) REFERENCES types_operations (id)
     );
+
+--------------------------------------------------
+-- ALTER TABLE CLIENTS - Ajouter colonne role
+--------------------------------------------------
+-- sqlite3 database/mobilemoney.db
+ALTER TABLE clients
+ADD COLUMN role TEXT CHECK (role IN ('client', 'operateur')) DEFAULT 'client';
+
+UPDATE clients
+SET
+    role = 'operateur'
+WHERE
+    id = 1;
 
 --------------------------------------------------
 -- INSERT PREFIXES
