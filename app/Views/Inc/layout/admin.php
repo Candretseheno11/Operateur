@@ -28,24 +28,8 @@
                 <span>Tableau de bord</span>
             </a>
 
-            <a href="/operateur/comptes"
-                class="nav-link-custom <?= current_url(true)->getSegment(2) == 'comptes' ? 'active' : '' ?>">
-                <i class="bi bi-"></i>
-                <span>Comptes</span>
-            </a>
-
-            <a href="/operateur/transactions"
-                class="nav-link-custom <?= current_url(true)->getSegment(2) == 'transactions' ? 'active' : '' ?>">
-                <i class="bi bi-money"></i>
-                <span>Transaction</span>
-            </a>
 
 
-            <a href="/operateur/gold/pending"
-                class="nav-link-custom <?= current_url(true)->getSegment(2) == 'gold' ? 'active' : '' ?>">
-                <i class="bi bi-person-badge-fill"></i>
-                <span>Golden User</span>
-            </a>
             <div class="menu-label mt-4">CRUD</div>
 
             <a href="/operateur/bareme"

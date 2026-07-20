@@ -86,69 +86,18 @@
                 <div class="card-header bg-transparent border-0 pt-4 px-4">
                     <div class="d-flex justify-content-between align-items-center">
                         <h6 class="fw-bold m-0"><i class="bi bi-graph-up-arrow me-2 text-primary"></i>Évolution des
-                            Opérations (7 derniers jours)</h6>
+                            Opérations </h6>
                     </div>
                 </div>
                 <div class="card-body p-4">
                     <div style="height: 300px; position: relative;">
-                        <canvas id="performanceChart"></canvas>
+                        <canvas id="pieChart"></canvas>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Récapitulatif des Opérations -->
-        <div class="col-lg-4">
-            <div class="card border-0 shadow-sm rounded-4 h-100">
-                <div class="card-header bg-transparent border-0 pt-4 px-4">
-                    <h6 class="fw-bold m-0"><i class="bi bi-list-check me-2 text-primary"></i>Statut des Opérations</h6>
-                </div>
-                <div class="card-body p-4">
 
-                    <!-- Vous pouvez lier ces chiffres à votre contrôleur si vous souhaitez afficher l'état des demandes -->
-                    <div class="mb-4">
-                        <div class="d-flex align-items-center justify-content-between p-3 border rounded-3 mb-2">
-                            <div class="d-flex align-items-center">
-                                <div class="bg-success text-white rounded-circle p-2 me-3 d-flex align-items-center justify-content-center"
-                                    style="width: 30px; height: 30px;">
-                                    <i class="bi bi-check-lg"></i>
-                                </div>
-                                <div class="fw-bold small">Validées</div>
-                            </div>
-                            <div class="fw-bold text-success"><?= $stats['totalApproved'] ?? 0 ?></div>
-                        </div>
-
-                        <div
-                            class="d-flex align-items-center justify-content-between p-3 border rounded-3 mb-2 bg-light">
-                            <div class="d-flex align-items-center">
-                                <div class="bg-warning text-white rounded-circle p-2 me-3 d-flex align-items-center justify-content-center"
-                                    style="width: 30px; height: 30px;">
-                                    <i class="bi bi-hourglass-split"></i>
-                                </div>
-                                <div class="fw-bold small">En attente</div>
-                            </div>
-                            <div class="fw-bold text-warning"><?= $stats['totalPending'] ?? 0 ?></div>
-                        </div>
-
-                        <div class="d-flex align-items-center justify-content-between p-3 border rounded-3 mb-4">
-                            <div class="d-flex align-items-center">
-                                <div class="bg-danger text-white rounded-circle p-2 me-3 d-flex align-items-center justify-content-center"
-                                    style="width: 30px; height: 30px;">
-                                    <i class="bi bi-x-lg"></i>
-                                </div>
-                                <div class="fw-bold small">Annulées/Échouées</div>
-                            </div>
-                            <div class="fw-bold text-danger"><?= $stats['totalRejected'] ?? 0 ?></div>
-                        </div>
-                    </div>
-
-                    <a href="<?= base_url('operateur/transactions') ?>"
-                        class="btn btn-primary w-100 py-2 rounded-3 shadow-sm">
-                        Voir l'historique complet <i class="bi bi-arrow-right ms-2"></i>
-                    </a>
-                </div>
-            </div>
-        </div>
     </div>
 </div>
 
@@ -156,60 +105,39 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const canvas = document.getElementById('performanceChart');
-        if (!canvas) return;
 
-        const ctx = canvas.getContext('2d');
+        const ctx = document.getElementById('pieChart').getContext('2d');
 
-        const chartLabels = <?= json_encode(['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim']) ?>;
-
-        // Volumes de transactions (passez ces données via le contrôleur dans $stats['chartData'])
-        const chartDataValues = <?= json_encode($stats['chartData'] ?? [12, 19, 15, 25, 22, 30, 28]) ?>;
-
-        const gradient = ctx.createLinearGradient(0, 0, 0, 300);
-        gradient.addColorStop(0, 'rgba(37, 99, 235, 0.2)');
-        gradient.addColorStop(1, 'rgba(37, 99, 235, 0)');
+        const pieData = <?= json_encode($stats['pieData']) ?>;
 
         new Chart(ctx, {
-            type: 'line',
+            type: 'pie',
             data: {
-                labels: chartLabels,
+                labels: ['Retraits', 'Transferts'],
                 datasets: [{
-                    label: 'Volume de Transactions',
-                    data: chartDataValues,
-                    borderColor: '#2563eb',
-                    borderWidth: 3,
-                    fill: true,
-                    backgroundColor: gradient,
-                    tension: 0.4,
-                    pointBackgroundColor: '#fff',
-                    pointBorderColor: '#2563eb',
-                    pointRadius: 4
+                    data: pieData,
+                    backgroundColor: [
+                        '#198754', // Vert
+                        '#0d6efd' // Bleu
+                    ],
+                    borderColor: '#fff',
+                    borderWidth: 2
                 }]
             },
             options: {
                 responsive: true,
-                maintainAspectRatio: false,
                 plugins: {
                     legend: {
-                        display: false
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        grid: {
-                            color: 'rgba(0,0,0,0.05)'
-                        }
+                        position: 'bottom'
                     },
-                    x: {
-                        grid: {
-                            display: false
-                        }
+                    title: {
+                        display: true,
+                        text: 'Répartition Retraits / Transferts'
                     }
                 }
             }
         });
+
     });
 </script>
 

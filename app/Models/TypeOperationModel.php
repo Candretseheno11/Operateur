@@ -10,4 +10,14 @@ class TypeOperationModel extends Model
     protected $primaryKey = 'id';
     protected $allowedFields = ['libelle'];
     protected $useTimestamps = true;
+
+    public function getTypeOperationById($id)
+    {
+        return $this->find($id);
+    }
+
+    public function getIdByLibelle($libelle)
+    {
+        return $this->where('libelle', $libelle)->first()['id'] ?? null;
+    }
 }

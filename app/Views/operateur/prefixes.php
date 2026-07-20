@@ -79,11 +79,7 @@
                                         <?php endif; ?>
                                     </td>
                                     <td class="pe-4 text-end">
-                                        <a href="<?= base_url('/operateur/prefixes/edit/' . $p['id']) ?>"
-                                            class="btn btn-outline-warning btn-sm rounded-circle p-2 me-1 d-inline-flex align-items-center justify-content-center"
-                                            style="width: 34px; height: 34px;" title="Modifier">
-                                            <i class="bi bi-pencil"></i>
-                                        </a>
+                                        s
 
                                         <a href="<?= base_url('/operateur/prefixes/delete/' . $p['id']) ?>"
                                             class="btn btn-outline-danger btn-sm rounded-circle p-2 d-inline-flex align-items-center justify-content-center"

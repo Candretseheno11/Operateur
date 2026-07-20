@@ -10,13 +10,10 @@ class PrefixeModel extends Model
     protected $primaryKey = 'id';
     protected $allowedFields = ['prefixe', 'actif'];
 
-    // ⚠️ Ne laisse ceci à `true` QUE si ta table `prefixes` possède bien
-    // les colonnes `created_at` et `updated_at` (type DATETIME/TIMESTAMP).
-    // Sinon insert()/update() plantera avec "Unknown column 'created_at'".
-    protected $useTimestamps = true;
+    // La table SQLite actuelle ne contient pas de colonnes created_at/updated_at.
+    // On désactive donc les timestamps automatiques pour éviter l'erreur lors de l'insertion.
+    protected $useTimestamps = false;
     protected $dateFormat = 'datetime';
-    protected $createdField = 'created_at';
-    protected $updatedField = 'updated_at';
 
     protected $validationRules = [
         'prefixe' => 'required|is_unique[prefixes.prefixe,id,{id}]',

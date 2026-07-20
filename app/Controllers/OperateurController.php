@@ -32,19 +32,10 @@ class OperateurController extends BaseController
             'gainTotal' => ($gainRetrait['frais'] ?? 0) + ($gainTransfert['frais'] ?? 0),
             'totalClient' => $totalClient,
             'stats' => [
-                'totalUsers' => $totalClient,
-                'totalUtilisateurs' => $totalClient,
-                'totalRegimes' => 0, // À adapter selon vos modèles
-                'avgRegimePrix' => 0, // À adapter
-                'caloriesAverage' => 0, // À adapter
-                'totalActivites' => 0, // À adapter
-                'totalTransactionsMontant' => $gainTotal,
-                'totalApproved' => 0, // À adapter
-                'totalPending' => 0, // À adapter
-                'totalRejected' => 0, // À adapter
-
-                // Données dynamiques envoyées au graphique Chart.js (7 jours de la semaine)
-                'chartData' => [12, 19, 15, 25, 22, 30, 28]
+                'pieData' => [
+                    $gainRetrait['frais'] ?? 0,
+                    $gainTransfert['frais'] ?? 0
+                ]
             ]
         ];
 
@@ -232,6 +223,7 @@ class OperateurController extends BaseController
 
     public function addFormPrefix()
     {
+
         return view('operateur/add_prefixe');
     }
     public function editPrefix($id)
