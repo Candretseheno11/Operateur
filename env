@@ -29,18 +29,14 @@
 #--------------------------------------------------------------------
 # DATABASE
 #--------------------------------------------------------------------
-CI_ENVIRONMENT = development
 
-# Database
-database.default.hostname = localhost
-database.default.database = mobilemoney.db
-database.default.username = root
-database.default.password = 
-database.default.DBDriver = MySQLi
-database.default.DBPrefix = 
-
-# App
-app.baseURL = 'http://localhost:8080/'
+# database.default.hostname = localhost
+# database.default.database = ci4
+# database.default.username = root
+# database.default.password = root
+# database.default.DBDriver = MySQLi
+# database.default.DBPrefix =
+# database.default.port = 3306
 
 # If you use MySQLi as tests, first update the values of Config\Database::$tests.
 # database.tests.hostname = localhost
