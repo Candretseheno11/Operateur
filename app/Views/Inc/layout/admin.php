@@ -16,7 +16,7 @@
     <aside class="sidebar" id="sidebar">
         <a href="/operateur" class="sidebar-brand">
             <i class="bi bi-shield-check-fill text-primary"></i>
-            <span>Operateur Mobile Money <br><span class="text-primary">Admin</span></span>
+            <span>E-Money <br><span class="text-primary">Admin</span></span>
         </a>
 
         <div class="nav-menu">
@@ -28,12 +28,18 @@
                 <span>Tableau de bord</span>
             </a>
 
+            <a href="/operateur/gains"
+                class="nav-link-custom <?= current_url(true)->getSegment(2) == 'gains' ? 'active' : '' ?>">
+                <i class="bi bi"></i>
+                <span>Gains</span>
+            </a>
+
 
 
             <div class="menu-label mt-4">CRUD</div>
 
             <a href="/operateur/bareme"
-                class="nav-link-custom <?= current_url(true)->getSegment(2) == 'wallet-requests' ? 'active' : '' ?>">
+                class="nav-link-custom <?= current_url(true)->getSegment(2) == 'bareme' ? 'active' : '' ?>">
                 <i class="bi bi-wallet2"></i>
                 <span>Baremes</span>
                 <?php if (isset($pending_count) && $pending_count > 0): ?>
@@ -42,7 +48,7 @@
             </a>
 
             <a href=" /operateur/prefixes"
-                class="nav-link-custom <?= current_url(true)->getSegment(2) == 'code' ? 'active' : '' ?>">
+                class="nav-link-custom <?= current_url(true)->getSegment(2) == 'prefixes' ? 'active' : '' ?>">
                 <i class="bi bi-credit-card-2-front"></i>
                 <span>Prefixes</span>
                 <?php if (isset($pending_count) && $pending_count > 0): ?>
