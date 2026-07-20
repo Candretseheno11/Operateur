@@ -405,6 +405,16 @@
                                     Ar</div>
                             </div>
                         </div>
+                        <div class="rounded-xl border border-emerald-100 bg-emerald-50/70 px-4 py-3 text-sm text-slate-700 space-y-1">
+                            <div class="flex items-center justify-between gap-3">
+                                <span class="font-medium text-slate-500">Destinataires</span>
+                                <span id="transferRecipientsCount" class="font-bold text-slate-800">1</span>
+                            </div>
+                            <div class="flex items-center justify-between gap-3">
+                                <span class="font-medium text-slate-500">Montant par destinataire</span>
+                                <span id="transferAmountPerRecipient" class="font-bold text-emerald-700">0 Ar</span>
+                            </div>
+                        </div>
                         <div class="flex items-center gap-2">
                             <input type="checkbox" id="includeFees"
                                 class="w-4 h-4 text-emerald-600 bg-gray-100 border-gray-300 rounded focus:ring-emerald-500">
@@ -493,6 +503,10 @@
                 inner.classList.remove('translate-y-full', 'sm:scale-95');
                 inner.classList.add('translate-y-0', 'sm:scale-100');
             }, 10);
+
+            if (id === 'modalTransfert') {
+                updateTransferPreview();
+            }
         }
 
         function closeModal(id) {
@@ -552,6 +566,7 @@
             `;
             container.appendChild(newGroup);
             recipientIndex++;
+            updateTransferPreview();
         }
 
         function removeRecipient(button) {
@@ -559,9 +574,24 @@
             const groups = container.querySelectorAll('.recipient-group');
             if (groups.length > 1) {
                 button.closest('.recipient-group').remove();
+                updateTransferPreview();
             } else {
                 showAlert('Vous devez avoir au moins un destinataire', 'danger');
             }
+        }
+
+        function getTransferRecipientCount() {
+            return document.querySelectorAll('#recipientsContainer .recipient-group').length;
+        }
+
+        function updateTransferPreview() {
+            const amountInput = document.getElementById('amountTransfert');
+            const amount = parseFloat(amountInput.value) || 0;
+            const recipientsCount = getTransferRecipientCount();
+            const amountPerRecipient = recipientsCount > 0 ? amount / recipientsCount : 0;
+
+            document.getElementById('transferRecipientsCount').textContent = recipientsCount;
+            document.getElementById('transferAmountPerRecipient').textContent = formatAriary(amountPerRecipient);
         }
 
         // Filtrage / recherche côté client sur les lignes déjà rendues par PHP
@@ -633,6 +663,7 @@
                         if (index > 0) group.remove();
                     });
                     recipientIndex = 1;
+                    updateTransferPreview();
                     closeModal('modal' + type.charAt(0).toUpperCase() + type.slice(1));
                     // Recharge la page pour afficher la nouvelle transaction dans l'historique
                     setTimeout(() => window.location.reload(), 900);
@@ -648,6 +679,10 @@
             renderBalance();
             document.getElementById('txnSearch').addEventListener('input', filterTransactions);
             document.getElementById('txnFilter').addEventListener('change', filterTransactions);
+            document.getElementById('amountTransfert').addEventListener('input', updateTransferPreview);
+            document.getElementById('includeFees').addEventListener('change', updateTransferPreview);
+            document.getElementById('recipientsContainer').addEventListener('input', updateTransferPreview);
+            updateTransferPreview();
         });
     </script>
 
