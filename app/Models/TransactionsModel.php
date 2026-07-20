@@ -31,4 +31,15 @@ class TransactionsModel extends Model
             ->orderBy('date_transaction', 'DESC')
             ->findAll();
     }
+
+    public function getGainByTransfert()
+    {
+
+        return $this->selectSum('frais')->where('id_type_operation', 3)->first();
+    }
+    public function getGainByRetrait()
+    {
+        return $this->selectSum('frais')->where('id_type_operation', 2)->first();
+    }
+
 }

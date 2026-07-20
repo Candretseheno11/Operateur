@@ -4,7 +4,7 @@ namespace App\Controllers;
 
 use App\Models\CodeModel;
 
-class Code extends BaseController
+class Operateur extends BaseController
 {
     protected $codeModel;
 
