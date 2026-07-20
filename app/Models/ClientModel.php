@@ -8,28 +8,37 @@ class ClientModel extends Model
 {
     protected $table = 'clients';
     protected $primaryKey = 'id';
-    protected $allowedFields = ['nom', 'prenom', 'date_creation', 'telephone', 'prefixe'];
-    // Ajoutez cette méthode ici :
+
+    // N'incluez dans allowedFields que les vraies colonnes de votre table
+    protected $allowedFields = ['nom', 'telephone', 'date_creation', 'role'];
+
     public function getClientById($id)
     {
         return $this->find($id);
     }
+
     public function getClientByTelephones($telephone)
     {
         return $this->where('telephone', $telephone)->first();
-
     }
+
+    /**
+     * Récupère un client avec son compte via son numéro
+     */
     public function getClientByTelephone(string $telephone)
     {
-        return $this->select('clients.*, comptes.id as id_compte, comptes.solde, prefixes.prefixe')
+        return $this->select('clients.*, comptes.id as id_compte, comptes.solde')
             ->join('comptes', 'comptes.id_client = clients.id', 'left')
-            ->join('prefixes', 'prefixes.id = clients.id_prefixe', 'left')
             ->where('clients.telephone', $telephone)
             ->first();
     }
+
+    /**
+     * Vérifie si le préfixe existe dans la table prefixes (ex: 033, 037)
+     */
     public function getPrefixeByNumber(string $telephone)
     {
-        $codePrefixe = substr($telephone, 0, 3); // Extrait les 3 premiers chiffres (ex: 033 ou 037)
+        $codePrefixe = substr($telephone, 0, 3); // Extrait 033, 037, etc.
 
         $db = \Config\Database::connect();
         return $db->table('prefixes')
@@ -37,5 +46,10 @@ class ClientModel extends Model
             ->where('actif', 1)
             ->get()
             ->getRowArray();
+    }
+
+    public function getCountClients()
+    {
+        return $this->countAllResults();
     }
 }

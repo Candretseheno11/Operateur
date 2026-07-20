@@ -42,4 +42,14 @@ class PrefixeModel extends Model
         return $this->find($id);
     }
 
+    public function addPrefix($data)
+    {
+        return $this->insert($data);
+    }
+
+    public function updatePrefix($id, $data)
+    {
+        return $this->update($id, $data);
+    }
+
 }

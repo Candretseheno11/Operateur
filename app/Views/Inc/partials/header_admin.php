@@ -19,7 +19,7 @@
                 data-bs-toggle="dropdown">
                 <div class="text-end d-none d-sm-block">
                     <div class="fw-bold text-dark small" style="line-height: 1;">
-                        <?= session()->get('user')['nom'] ?? 'Administrateur' ?>
+                        Administrateur
                     </div>
                     <small class="text-muted" style="font-size: 0.7rem;">Super Admin</small>
                 </div>
