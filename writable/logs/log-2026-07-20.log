@@ -1134,3 +1134,340 @@ in SYSTEMPATH/Model.php on line 761.
  6 SYSTEMPATH/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
  7 FCPATH/index.php(59): CodeIgniter\Boot::bootWeb()
  8 SYSTEMPATH/rewrite.php(44): require_once('/home/davida/Documents/Exam-Rojo/Operateur/public/index.php')
+DEBUG - 2026-07-20 12:52:30 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-07-20 12:52:47 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2026-07-20 12:53:01 --> CSRF token verified.
+DEBUG - 2026-07-20 12:53:01 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+ERROR - 2026-07-20 12:53:01 --> no such column: updated_at
+in SYSTEMPATH/Database/SQLite3/Connection.php on line 163.
+ 1 SYSTEMPATH/Database/SQLite3/Connection.php(163): SQLite3->exec()
+ 2 SYSTEMPATH/Database/BaseConnection.php(910): CodeIgniter\Database\SQLite3\Connection->execute()
+ 3 SYSTEMPATH/Database/BaseConnection.php(827): CodeIgniter\Database\BaseConnection->simpleQuery()
+ 4 SYSTEMPATH/Database/BaseBuilder.php(2521): CodeIgniter\Database\BaseConnection->query()
+ 5 SYSTEMPATH/Model.php(406): CodeIgniter\Database\BaseBuilder->update()
+ 6 SYSTEMPATH/BaseModel.php(1074): CodeIgniter\Model->doUpdate()
+ 7 SYSTEMPATH/Model.php(709): CodeIgniter\BaseModel->update()
+ 8 APPPATH/Models/CompteModel.php(30): CodeIgniter\Model->update()
+ 9 APPPATH/Controllers/ClientController.php(102): App\Models\CompteModel->crediter()
+10 SYSTEMPATH/CodeIgniter.php(951): App\Controllers\ClientController->depot()
+11 SYSTEMPATH/CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController()
+12 SYSTEMPATH/CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
+13 SYSTEMPATH/Boot.php(417): CodeIgniter\CodeIgniter->run()
+14 SYSTEMPATH/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
+15 FCPATH/index.php(59): CodeIgniter\Boot::bootWeb()
+16 SYSTEMPATH/rewrite.php(44): require_once('/home/davida/Documents/Exam-Rojo/Operateur/public/index.php')
+ERROR - 2026-07-20 12:53:01 --> table transactions has no column named created_at
+in SYSTEMPATH/Database/SQLite3/Connection.php on line 163.
+ 1 SYSTEMPATH/Database/SQLite3/Connection.php(163): SQLite3->exec()
+ 2 SYSTEMPATH/Database/BaseConnection.php(910): CodeIgniter\Database\SQLite3\Connection->execute()
+ 3 SYSTEMPATH/Database/BaseConnection.php(827): CodeIgniter\Database\BaseConnection->simpleQuery()
+ 4 SYSTEMPATH/Database/BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query()
+ 5 SYSTEMPATH/Model.php(355): CodeIgniter\Database\BaseBuilder->insert()
+ 6 SYSTEMPATH/BaseModel.php(899): CodeIgniter\Model->doInsert()
+ 7 SYSTEMPATH/Model.php(668): CodeIgniter\BaseModel->insert()
+ 8 APPPATH/Controllers/ClientController.php(104): CodeIgniter\Model->insert()
+ 9 SYSTEMPATH/CodeIgniter.php(951): App\Controllers\ClientController->depot()
+10 SYSTEMPATH/CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController()
+11 SYSTEMPATH/CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
+12 SYSTEMPATH/Boot.php(417): CodeIgniter\CodeIgniter->run()
+13 SYSTEMPATH/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
+14 FCPATH/index.php(59): CodeIgniter\Boot::bootWeb()
+15 SYSTEMPATH/rewrite.php(44): require_once('/home/davida/Documents/Exam-Rojo/Operateur/public/index.php')
+ERROR - 2026-07-20 12:53:01 --> Echec dépôt compte 1 : {"code":0,"message":"not an error"}
+DEBUG - 2026-07-20 12:53:01 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2026-07-20 12:53:02 --> CSRF token verified.
+DEBUG - 2026-07-20 12:53:02 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+ERROR - 2026-07-20 12:53:02 --> no such column: updated_at
+in SYSTEMPATH/Database/SQLite3/Connection.php on line 163.
+ 1 SYSTEMPATH/Database/SQLite3/Connection.php(163): SQLite3->exec()
+ 2 SYSTEMPATH/Database/BaseConnection.php(910): CodeIgniter\Database\SQLite3\Connection->execute()
+ 3 SYSTEMPATH/Database/BaseConnection.php(827): CodeIgniter\Database\BaseConnection->simpleQuery()
+ 4 SYSTEMPATH/Database/BaseBuilder.php(2521): CodeIgniter\Database\BaseConnection->query()
+ 5 SYSTEMPATH/Model.php(406): CodeIgniter\Database\BaseBuilder->update()
+ 6 SYSTEMPATH/BaseModel.php(1074): CodeIgniter\Model->doUpdate()
+ 7 SYSTEMPATH/Model.php(709): CodeIgniter\BaseModel->update()
+ 8 APPPATH/Models/CompteModel.php(30): CodeIgniter\Model->update()
+ 9 APPPATH/Controllers/ClientController.php(102): App\Models\CompteModel->crediter()
+10 SYSTEMPATH/CodeIgniter.php(951): App\Controllers\ClientController->depot()
+11 SYSTEMPATH/CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController()
+12 SYSTEMPATH/CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
+13 SYSTEMPATH/Boot.php(417): CodeIgniter\CodeIgniter->run()
+14 SYSTEMPATH/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
+15 FCPATH/index.php(59): CodeIgniter\Boot::bootWeb()
+16 SYSTEMPATH/rewrite.php(44): require_once('/home/davida/Documents/Exam-Rojo/Operateur/public/index.php')
+ERROR - 2026-07-20 12:53:02 --> table transactions has no column named created_at
+in SYSTEMPATH/Database/SQLite3/Connection.php on line 163.
+ 1 SYSTEMPATH/Database/SQLite3/Connection.php(163): SQLite3->exec()
+ 2 SYSTEMPATH/Database/BaseConnection.php(910): CodeIgniter\Database\SQLite3\Connection->execute()
+ 3 SYSTEMPATH/Database/BaseConnection.php(827): CodeIgniter\Database\BaseConnection->simpleQuery()
+ 4 SYSTEMPATH/Database/BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query()
+ 5 SYSTEMPATH/Model.php(355): CodeIgniter\Database\BaseBuilder->insert()
+ 6 SYSTEMPATH/BaseModel.php(899): CodeIgniter\Model->doInsert()
+ 7 SYSTEMPATH/Model.php(668): CodeIgniter\BaseModel->insert()
+ 8 APPPATH/Controllers/ClientController.php(104): CodeIgniter\Model->insert()
+ 9 SYSTEMPATH/CodeIgniter.php(951): App\Controllers\ClientController->depot()
+10 SYSTEMPATH/CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController()
+11 SYSTEMPATH/CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
+12 SYSTEMPATH/Boot.php(417): CodeIgniter\CodeIgniter->run()
+13 SYSTEMPATH/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
+14 FCPATH/index.php(59): CodeIgniter\Boot::bootWeb()
+15 SYSTEMPATH/rewrite.php(44): require_once('/home/davida/Documents/Exam-Rojo/Operateur/public/index.php')
+ERROR - 2026-07-20 12:53:02 --> Echec dépôt compte 1 : {"code":0,"message":"not an error"}
+DEBUG - 2026-07-20 12:53:03 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-07-20 12:53:09 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-07-20 12:53:09 --> Redirection pour le rôle: client
+DEBUG - 2026-07-20 12:53:09 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-07-20 12:53:14 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-07-20 12:53:14 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2026-07-20 12:53:19 --> CSRF token verified.
+DEBUG - 2026-07-20 12:53:19 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-07-20 12:53:19 --> Redirection pour le rôle: client
+DEBUG - 2026-07-20 12:53:19 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2026-07-20 12:53:28 --> CSRF token verified.
+DEBUG - 2026-07-20 12:53:28 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+ERROR - 2026-07-20 12:53:28 --> no such column: updated_at
+in SYSTEMPATH/Database/SQLite3/Connection.php on line 163.
+ 1 SYSTEMPATH/Database/SQLite3/Connection.php(163): SQLite3->exec()
+ 2 SYSTEMPATH/Database/BaseConnection.php(910): CodeIgniter\Database\SQLite3\Connection->execute()
+ 3 SYSTEMPATH/Database/BaseConnection.php(827): CodeIgniter\Database\BaseConnection->simpleQuery()
+ 4 SYSTEMPATH/Database/BaseBuilder.php(2521): CodeIgniter\Database\BaseConnection->query()
+ 5 SYSTEMPATH/Model.php(406): CodeIgniter\Database\BaseBuilder->update()
+ 6 SYSTEMPATH/BaseModel.php(1074): CodeIgniter\Model->doUpdate()
+ 7 SYSTEMPATH/Model.php(709): CodeIgniter\BaseModel->update()
+ 8 APPPATH/Models/CompteModel.php(30): CodeIgniter\Model->update()
+ 9 APPPATH/Controllers/ClientController.php(102): App\Models\CompteModel->crediter()
+10 SYSTEMPATH/CodeIgniter.php(951): App\Controllers\ClientController->depot()
+11 SYSTEMPATH/CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController()
+12 SYSTEMPATH/CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
+13 SYSTEMPATH/Boot.php(417): CodeIgniter\CodeIgniter->run()
+14 SYSTEMPATH/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
+15 FCPATH/index.php(59): CodeIgniter\Boot::bootWeb()
+16 SYSTEMPATH/rewrite.php(44): require_once('/home/davida/Documents/Exam-Rojo/Operateur/public/index.php')
+ERROR - 2026-07-20 12:53:28 --> table transactions has no column named created_at
+in SYSTEMPATH/Database/SQLite3/Connection.php on line 163.
+ 1 SYSTEMPATH/Database/SQLite3/Connection.php(163): SQLite3->exec()
+ 2 SYSTEMPATH/Database/BaseConnection.php(910): CodeIgniter\Database\SQLite3\Connection->execute()
+ 3 SYSTEMPATH/Database/BaseConnection.php(827): CodeIgniter\Database\BaseConnection->simpleQuery()
+ 4 SYSTEMPATH/Database/BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query()
+ 5 SYSTEMPATH/Model.php(355): CodeIgniter\Database\BaseBuilder->insert()
+ 6 SYSTEMPATH/BaseModel.php(899): CodeIgniter\Model->doInsert()
+ 7 SYSTEMPATH/Model.php(668): CodeIgniter\BaseModel->insert()
+ 8 APPPATH/Controllers/ClientController.php(104): CodeIgniter\Model->insert()
+ 9 SYSTEMPATH/CodeIgniter.php(951): App\Controllers\ClientController->depot()
+10 SYSTEMPATH/CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController()
+11 SYSTEMPATH/CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
+12 SYSTEMPATH/Boot.php(417): CodeIgniter\CodeIgniter->run()
+13 SYSTEMPATH/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
+14 FCPATH/index.php(59): CodeIgniter\Boot::bootWeb()
+15 SYSTEMPATH/rewrite.php(44): require_once('/home/davida/Documents/Exam-Rojo/Operateur/public/index.php')
+ERROR - 2026-07-20 12:53:28 --> Echec dépôt compte 1 : {"code":0,"message":"not an error"}
+DEBUG - 2026-07-20 12:53:28 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2026-07-20 12:54:05 --> CSRF token verified.
+DEBUG - 2026-07-20 12:54:05 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+ERROR - 2026-07-20 12:54:05 --> no such column: updated_at
+in SYSTEMPATH/Database/SQLite3/Connection.php on line 163.
+ 1 SYSTEMPATH/Database/SQLite3/Connection.php(163): SQLite3->exec()
+ 2 SYSTEMPATH/Database/BaseConnection.php(910): CodeIgniter\Database\SQLite3\Connection->execute()
+ 3 SYSTEMPATH/Database/BaseConnection.php(827): CodeIgniter\Database\BaseConnection->simpleQuery()
+ 4 SYSTEMPATH/Database/BaseBuilder.php(2521): CodeIgniter\Database\BaseConnection->query()
+ 5 SYSTEMPATH/Model.php(406): CodeIgniter\Database\BaseBuilder->update()
+ 6 SYSTEMPATH/BaseModel.php(1074): CodeIgniter\Model->doUpdate()
+ 7 SYSTEMPATH/Model.php(709): CodeIgniter\BaseModel->update()
+ 8 APPPATH/Models/CompteModel.php(30): CodeIgniter\Model->update()
+ 9 APPPATH/Controllers/ClientController.php(102): App\Models\CompteModel->crediter()
+10 SYSTEMPATH/CodeIgniter.php(951): App\Controllers\ClientController->depot()
+11 SYSTEMPATH/CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController()
+12 SYSTEMPATH/CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
+13 SYSTEMPATH/Boot.php(417): CodeIgniter\CodeIgniter->run()
+14 SYSTEMPATH/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
+15 FCPATH/index.php(59): CodeIgniter\Boot::bootWeb()
+16 SYSTEMPATH/rewrite.php(44): require_once('/home/davida/Documents/Exam-Rojo/Operateur/public/index.php')
+ERROR - 2026-07-20 12:54:05 --> table transactions has no column named created_at
+in SYSTEMPATH/Database/SQLite3/Connection.php on line 163.
+ 1 SYSTEMPATH/Database/SQLite3/Connection.php(163): SQLite3->exec()
+ 2 SYSTEMPATH/Database/BaseConnection.php(910): CodeIgniter\Database\SQLite3\Connection->execute()
+ 3 SYSTEMPATH/Database/BaseConnection.php(827): CodeIgniter\Database\BaseConnection->simpleQuery()
+ 4 SYSTEMPATH/Database/BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query()
+ 5 SYSTEMPATH/Model.php(355): CodeIgniter\Database\BaseBuilder->insert()
+ 6 SYSTEMPATH/BaseModel.php(899): CodeIgniter\Model->doInsert()
+ 7 SYSTEMPATH/Model.php(668): CodeIgniter\BaseModel->insert()
+ 8 APPPATH/Controllers/ClientController.php(104): CodeIgniter\Model->insert()
+ 9 SYSTEMPATH/CodeIgniter.php(951): App\Controllers\ClientController->depot()
+10 SYSTEMPATH/CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController()
+11 SYSTEMPATH/CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
+12 SYSTEMPATH/Boot.php(417): CodeIgniter\CodeIgniter->run()
+13 SYSTEMPATH/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
+14 FCPATH/index.php(59): CodeIgniter\Boot::bootWeb()
+15 SYSTEMPATH/rewrite.php(44): require_once('/home/davida/Documents/Exam-Rojo/Operateur/public/index.php')
+ERROR - 2026-07-20 12:54:05 --> Echec dépôt compte 1 : {"code":0,"message":"not an error"}
+DEBUG - 2026-07-20 12:54:05 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-07-20 12:56:02 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-07-20 12:56:04 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-07-20 12:56:04 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2026-07-20 12:56:09 --> CSRF token verified.
+DEBUG - 2026-07-20 12:56:09 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-07-20 12:56:09 --> Redirection pour le rôle: client
+DEBUG - 2026-07-20 12:56:09 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2026-07-20 12:56:16 --> CSRF token verified.
+DEBUG - 2026-07-20 12:56:16 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+ERROR - 2026-07-20 12:56:16 --> no such column: updated_at
+in SYSTEMPATH/Database/SQLite3/Connection.php on line 163.
+ 1 SYSTEMPATH/Database/SQLite3/Connection.php(163): SQLite3->exec()
+ 2 SYSTEMPATH/Database/BaseConnection.php(910): CodeIgniter\Database\SQLite3\Connection->execute()
+ 3 SYSTEMPATH/Database/BaseConnection.php(827): CodeIgniter\Database\BaseConnection->simpleQuery()
+ 4 SYSTEMPATH/Database/BaseBuilder.php(2521): CodeIgniter\Database\BaseConnection->query()
+ 5 SYSTEMPATH/Model.php(406): CodeIgniter\Database\BaseBuilder->update()
+ 6 SYSTEMPATH/BaseModel.php(1074): CodeIgniter\Model->doUpdate()
+ 7 SYSTEMPATH/Model.php(709): CodeIgniter\BaseModel->update()
+ 8 APPPATH/Models/CompteModel.php(30): CodeIgniter\Model->update()
+ 9 APPPATH/Controllers/ClientController.php(102): App\Models\CompteModel->crediter()
+10 SYSTEMPATH/CodeIgniter.php(951): App\Controllers\ClientController->depot()
+11 SYSTEMPATH/CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController()
+12 SYSTEMPATH/CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
+13 SYSTEMPATH/Boot.php(417): CodeIgniter\CodeIgniter->run()
+14 SYSTEMPATH/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
+15 FCPATH/index.php(59): CodeIgniter\Boot::bootWeb()
+16 SYSTEMPATH/rewrite.php(44): require_once('/home/davida/Documents/Exam-Rojo/Operateur/public/index.php')
+ERROR - 2026-07-20 12:56:16 --> table transactions has no column named created_at
+in SYSTEMPATH/Database/SQLite3/Connection.php on line 163.
+ 1 SYSTEMPATH/Database/SQLite3/Connection.php(163): SQLite3->exec()
+ 2 SYSTEMPATH/Database/BaseConnection.php(910): CodeIgniter\Database\SQLite3\Connection->execute()
+ 3 SYSTEMPATH/Database/BaseConnection.php(827): CodeIgniter\Database\BaseConnection->simpleQuery()
+ 4 SYSTEMPATH/Database/BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query()
+ 5 SYSTEMPATH/Model.php(355): CodeIgniter\Database\BaseBuilder->insert()
+ 6 SYSTEMPATH/BaseModel.php(899): CodeIgniter\Model->doInsert()
+ 7 SYSTEMPATH/Model.php(668): CodeIgniter\BaseModel->insert()
+ 8 APPPATH/Controllers/ClientController.php(104): CodeIgniter\Model->insert()
+ 9 SYSTEMPATH/CodeIgniter.php(951): App\Controllers\ClientController->depot()
+10 SYSTEMPATH/CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController()
+11 SYSTEMPATH/CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
+12 SYSTEMPATH/Boot.php(417): CodeIgniter\CodeIgniter->run()
+13 SYSTEMPATH/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
+14 FCPATH/index.php(59): CodeIgniter\Boot::bootWeb()
+15 SYSTEMPATH/rewrite.php(44): require_once('/home/davida/Documents/Exam-Rojo/Operateur/public/index.php')
+ERROR - 2026-07-20 12:56:16 --> Echec dépôt compte 1 : {"code":0,"message":"not an error"}
+DEBUG - 2026-07-20 12:56:25 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-07-20 12:56:25 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2026-07-20 12:56:33 --> CSRF token verified.
+DEBUG - 2026-07-20 12:56:33 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-07-20 12:56:33 --> Redirection pour le rôle: client
+DEBUG - 2026-07-20 12:56:33 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2026-07-20 12:56:40 --> CSRF token verified.
+DEBUG - 2026-07-20 12:56:40 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-07-20 12:56:54 --> CodeIgniter\Security\Exceptions\SecurityException: The action you requested is not allowed.
+[Method: POST, Route: client/depot]
+in SYSTEMPATH/Security/Security.php on line 258.
+ 1 SYSTEMPATH/Security/Security.php(258): CodeIgniter\Security\Exceptions\SecurityException::forDisallowedAction()
+ 2 SYSTEMPATH/Filters/CSRF.php(52): CodeIgniter\Security\Security->verify()
+ 3 SYSTEMPATH/Filters/Filters.php(241): CodeIgniter\Filters\CSRF->before()
+ 4 SYSTEMPATH/Filters/Filters.php(221): CodeIgniter\Filters\Filters->runBefore()
+ 5 SYSTEMPATH/CodeIgniter.php(465): CodeIgniter\Filters\Filters->run()
+ 6 SYSTEMPATH/CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
+ 7 SYSTEMPATH/Boot.php(417): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
+ 9 FCPATH/index.php(59): CodeIgniter\Boot::bootWeb()
+10 SYSTEMPATH/rewrite.php(44): require_once('/home/davida/Documents/Exam-Rojo/Operateur/public/index.php')
+DEBUG - 2026-07-20 12:56:59 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2026-07-20 12:57:04 --> CSRF token verified.
+DEBUG - 2026-07-20 12:57:04 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+ERROR - 2026-07-20 12:57:04 --> no such column: updated_at
+in SYSTEMPATH/Database/SQLite3/Connection.php on line 163.
+ 1 SYSTEMPATH/Database/SQLite3/Connection.php(163): SQLite3->exec()
+ 2 SYSTEMPATH/Database/BaseConnection.php(910): CodeIgniter\Database\SQLite3\Connection->execute()
+ 3 SYSTEMPATH/Database/BaseConnection.php(827): CodeIgniter\Database\BaseConnection->simpleQuery()
+ 4 SYSTEMPATH/Database/BaseBuilder.php(2521): CodeIgniter\Database\BaseConnection->query()
+ 5 SYSTEMPATH/Model.php(406): CodeIgniter\Database\BaseBuilder->update()
+ 6 SYSTEMPATH/BaseModel.php(1074): CodeIgniter\Model->doUpdate()
+ 7 SYSTEMPATH/Model.php(709): CodeIgniter\BaseModel->update()
+ 8 APPPATH/Models/CompteModel.php(40): CodeIgniter\Model->update()
+ 9 APPPATH/Controllers/ClientController.php(163): App\Models\CompteModel->debiter()
+10 SYSTEMPATH/CodeIgniter.php(951): App\Controllers\ClientController->retrait()
+11 SYSTEMPATH/CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController()
+12 SYSTEMPATH/CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
+13 SYSTEMPATH/Boot.php(417): CodeIgniter\CodeIgniter->run()
+14 SYSTEMPATH/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
+15 FCPATH/index.php(59): CodeIgniter\Boot::bootWeb()
+16 SYSTEMPATH/rewrite.php(44): require_once('/home/davida/Documents/Exam-Rojo/Operateur/public/index.php')
+ERROR - 2026-07-20 12:57:04 --> Echec retrait compte 3 : {"code":0,"message":"not an error"}
+DEBUG - 2026-07-20 13:00:53 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-07-20 13:00:53 --> Redirection pour le rôle: client
+DEBUG - 2026-07-20 13:00:53 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-07-20 13:00:55 --> CodeIgniter\HTTP\Exceptions\BadRequestException: The URI you submitted has disallowed characters: "@vite"
+[Method: GET, Route: @vite/client]
+in SYSTEMPATH/Router/Router.php on line 768.
+ 1 SYSTEMPATH/Router/Router.php(219): CodeIgniter\Router\Router->checkDisallowedChars()
+ 2 SYSTEMPATH/CodeIgniter.php(829): CodeIgniter\Router\Router->handle()
+ 3 SYSTEMPATH/CodeIgniter.php(441): CodeIgniter\CodeIgniter->tryToRouteIt()
+ 4 SYSTEMPATH/CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
+ 5 SYSTEMPATH/Boot.php(417): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
+ 7 FCPATH/index.php(59): CodeIgniter\Boot::bootWeb()
+ 8 SYSTEMPATH/rewrite.php(44): require_once('/home/davida/Documents/Exam-Rojo/Operateur/public/index.php')
+INFO - 2026-07-20 13:01:04 --> CSRF token verified.
+DEBUG - 2026-07-20 13:01:04 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-07-20 13:01:05 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-07-20 13:01:06 --> CodeIgniter\HTTP\Exceptions\BadRequestException: The URI you submitted has disallowed characters: "@vite"
+[Method: GET, Route: @vite/client]
+in SYSTEMPATH/Router/Router.php on line 768.
+ 1 SYSTEMPATH/Router/Router.php(219): CodeIgniter\Router\Router->checkDisallowedChars()
+ 2 SYSTEMPATH/CodeIgniter.php(829): CodeIgniter\Router\Router->handle()
+ 3 SYSTEMPATH/CodeIgniter.php(441): CodeIgniter\CodeIgniter->tryToRouteIt()
+ 4 SYSTEMPATH/CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
+ 5 SYSTEMPATH/Boot.php(417): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
+ 7 FCPATH/index.php(59): CodeIgniter\Boot::bootWeb()
+ 8 SYSTEMPATH/rewrite.php(44): require_once('/home/davida/Documents/Exam-Rojo/Operateur/public/index.php')
+INFO - 2026-07-20 13:01:18 --> CSRF token verified.
+DEBUG - 2026-07-20 13:01:18 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-07-20 13:01:19 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-07-20 13:01:19 --> CodeIgniter\HTTP\Exceptions\BadRequestException: The URI you submitted has disallowed characters: "@vite"
+[Method: GET, Route: @vite/client]
+in SYSTEMPATH/Router/Router.php on line 768.
+ 1 SYSTEMPATH/Router/Router.php(219): CodeIgniter\Router\Router->checkDisallowedChars()
+ 2 SYSTEMPATH/CodeIgniter.php(829): CodeIgniter\Router\Router->handle()
+ 3 SYSTEMPATH/CodeIgniter.php(441): CodeIgniter\CodeIgniter->tryToRouteIt()
+ 4 SYSTEMPATH/CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
+ 5 SYSTEMPATH/Boot.php(417): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
+ 7 FCPATH/index.php(59): CodeIgniter\Boot::bootWeb()
+ 8 SYSTEMPATH/rewrite.php(44): require_once('/home/davida/Documents/Exam-Rojo/Operateur/public/index.php')
+DEBUG - 2026-07-20 13:02:30 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-07-20 13:02:30 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-07-20 13:02:31 --> CodeIgniter\HTTP\Exceptions\BadRequestException: The URI you submitted has disallowed characters: "@vite"
+[Method: GET, Route: @vite/client]
+in SYSTEMPATH/Router/Router.php on line 768.
+ 1 SYSTEMPATH/Router/Router.php(219): CodeIgniter\Router\Router->checkDisallowedChars()
+ 2 SYSTEMPATH/CodeIgniter.php(829): CodeIgniter\Router\Router->handle()
+ 3 SYSTEMPATH/CodeIgniter.php(441): CodeIgniter\CodeIgniter->tryToRouteIt()
+ 4 SYSTEMPATH/CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
+ 5 SYSTEMPATH/Boot.php(417): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
+ 7 FCPATH/index.php(59): CodeIgniter\Boot::bootWeb()
+ 8 SYSTEMPATH/rewrite.php(44): require_once('/home/davida/Documents/Exam-Rojo/Operateur/public/index.php')
+INFO - 2026-07-20 13:02:37 --> CSRF token verified.
+DEBUG - 2026-07-20 13:02:37 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-07-20 13:02:37 --> Redirection pour le rôle: operateur
+DEBUG - 2026-07-20 13:02:37 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-07-20 13:02:38 --> CodeIgniter\HTTP\Exceptions\BadRequestException: The URI you submitted has disallowed characters: "@vite"
+[Method: GET, Route: @vite/client]
+in SYSTEMPATH/Router/Router.php on line 768.
+ 1 SYSTEMPATH/Router/Router.php(219): CodeIgniter\Router\Router->checkDisallowedChars()
+ 2 SYSTEMPATH/CodeIgniter.php(829): CodeIgniter\Router\Router->handle()
+ 3 SYSTEMPATH/CodeIgniter.php(441): CodeIgniter\CodeIgniter->tryToRouteIt()
+ 4 SYSTEMPATH/CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
+ 5 SYSTEMPATH/Boot.php(417): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
+ 7 FCPATH/index.php(59): CodeIgniter\Boot::bootWeb()
+ 8 SYSTEMPATH/rewrite.php(44): require_once('/home/davida/Documents/Exam-Rojo/Operateur/public/index.php')
+DEBUG - 2026-07-20 13:02:46 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-07-20 13:02:47 --> CodeIgniter\HTTP\Exceptions\BadRequestException: The URI you submitted has disallowed characters: "@vite"
+[Method: GET, Route: @vite/client]
+in SYSTEMPATH/Router/Router.php on line 768.
+ 1 SYSTEMPATH/Router/Router.php(219): CodeIgniter\Router\Router->checkDisallowedChars()
+ 2 SYSTEMPATH/CodeIgniter.php(829): CodeIgniter\Router\Router->handle()
+ 3 SYSTEMPATH/CodeIgniter.php(441): CodeIgniter\CodeIgniter->tryToRouteIt()
+ 4 SYSTEMPATH/CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
+ 5 SYSTEMPATH/Boot.php(417): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
+ 7 FCPATH/index.php(59): CodeIgniter\Boot::bootWeb()
+ 8 SYSTEMPATH/rewrite.php(44): require_once('/home/davida/Documents/Exam-Rojo/Operateur/public/index.php')

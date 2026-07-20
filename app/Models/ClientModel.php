@@ -19,7 +19,10 @@ class ClientModel extends Model
 
     public function getClientByTelephone($telephone)
     {
-        return $this->where('telephone', $telephone)->first();
+        return $this->select('clients.*, comptes.id as id_compte, comptes.solde')
+            ->join('comptes', 'clients.id = comptes.id_client', 'left')
+            ->where('telephone', $telephone)
+            ->first();
     }
 
     /**

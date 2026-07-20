@@ -19,9 +19,9 @@ class ClientController extends BaseController
 {
     // Libellés attendus dans la table `types_operations`.
     // Si les libellés réels en base sont différents, adapte ces constantes.
-    private const LIBELLE_DEPOT = 'depot';
-    private const LIBELLE_RETRAIT = 'retrait';
-    private const LIBELLE_TRANSFERT = 'transfert';
+    private const LIBELLE_DEPOT = 'Depot';
+    private const LIBELLE_RETRAIT = 'Retrait';
+    private const LIBELLE_TRANSFERT = 'Transfert';
 
     private CompteModel $compteModel;
     private TransactionsModel $transactionsModel;
@@ -82,18 +82,18 @@ class ClientController extends BaseController
         $montant = (float) $this->request->getPost('montant');
 
         if ($montant <= 0) {
-            return redirect()->to('/client/dashboard')->with('error', 'Montant de dépôt invalide.');
+            return $this->jsonError('Montant de dépôt invalide.');
         }
 
         if (!$compte) {
-            return redirect()->to('/client/dashboard')->with('error', 'Compte introuvable.');
+            return $this->jsonError('Compte introuvable.');
         }
 
         try {
             $idTypeDepot = 1;
             $frais = $this->calculerFrais($idTypeDepot, $montant);
         } catch (RuntimeException $e) {
-            return redirect()->to('/client/dashboard')->with('error', $e->getMessage());
+            return $this->jsonError($e->getMessage());
         }
 
         $db = \Config\Database::connect();
@@ -114,10 +114,14 @@ class ClientController extends BaseController
 
         if ($db->transStatus() === false) {
             log_message('error', 'Echec dépôt compte ' . $compte['id'] . ' : ' . json_encode($db->error()));
-            return redirect()->to('/client/dashboard')->with('error', 'Une erreur est survenue lors du dépôt.');
+            return $this->jsonError('Une erreur est survenue lors du dépôt.');
         }
 
-        return redirect()->to('/client/dashboard')->with('success', "Dépôt de " . number_format($montant, 2, ',', ' ') . " Ar effectué avec succès.");
+        return $this->response->setJSON([
+            'success' => true,
+            'message' => "Dépôt de " . number_format($montant, 2, ',', ' ') . " Ar effectué avec succès.",
+            'solde' => (float) $this->compteModel->getSolde($compte['id']),
+        ]);
     }
 
     /**
@@ -128,19 +132,19 @@ class ClientController extends BaseController
         $montant = (float) $this->request->getPost('montant');
 
         if ($montant <= 0) {
-            return redirect()->to('/client/dashboard')->with('error', 'Montant de retrait invalide.');
+            return $this->jsonError('Montant de retrait invalide.');
         }
 
         $compte = $this->compteActuel();
         if (!$compte) {
-            return redirect()->to('/client/dashboard')->with('error', 'Compte introuvable.');
+            return $this->jsonError('Compte introuvable.');
         }
 
         try {
             $idTypeRetrait = 2;
             $frais = $this->calculerFrais($idTypeRetrait, $montant);
         } catch (RuntimeException $e) {
-            return redirect()->to('/client/dashboard')->with('error', $e->getMessage());
+            return $this->jsonError($e->getMessage());
         }
 
         $totalDebit = $montant + $frais;
@@ -153,8 +157,7 @@ class ClientController extends BaseController
 
         if (!$compteVerrouille || (float) $compteVerrouille['solde'] < $totalDebit) {
             $db->transComplete();
-            return redirect()->to('/client/dashboard')->with('error', 'Solde insuffisant pour couvrir le retrait et les frais de ' . number_format($frais, 2, ',', ' ') . ' Ar.');
-
+            return $this->jsonError('Solde insuffisant pour couvrir le retrait et les frais de ' . number_format($frais, 2, ',', ' ') . ' Ar.');
         }
 
         $debitOk = $this->compteModel->debiter($compte['id'], $totalDebit);
@@ -174,7 +177,7 @@ class ClientController extends BaseController
 
         if ($db->transStatus() === false || !$debitOk) {
             log_message('error', 'Echec retrait compte ' . $compte['id'] . ' : ' . json_encode($db->error()));
-            return redirect()->to('/client/dashboard')->with('error', 'Une erreur est survenue lors du retrait.');
+            return $this->jsonError('Une erreur est survenue lors du retrait.');
         }
 
         return $this->response->setJSON([
@@ -194,32 +197,32 @@ class ClientController extends BaseController
         $montant = (float) $this->request->getPost('montant');
 
         if (!preg_match('/^0(32|33|34|37|38)\d{7}$/', $telephoneDest)) {
-            return redirect()->to('/client/dashboard')->with('error', 'Numéro de téléphone destinataire invalide.');
+            return $this->jsonError('Numéro de téléphone destinataire invalide.');
         }
 
         if ($montant <= 0) {
-            return redirect()->to('/client/dashboard')->with('error', 'Montant de transfert invalide.');
+            return $this->jsonError('Montant de transfert invalide.');
         }
 
         $compteSource = $this->compteActuel();
         if (!$compteSource) {
-            return redirect()->to('/client/dashboard')->with('error', 'Compte introuvable.');
+            return $this->jsonError('Compte introuvable.');
         }
 
         $clientDest = $this->clientModel->getClientByTelephone($telephoneDest);
         if (!$clientDest || empty($clientDest['id_compte'])) {
-            return redirect()->to('/client/dashboard')->with('error', 'Aucun compte actif ne correspond à ce numéro.');
+            return $this->jsonError('Aucun compte actif ne correspond à ce numéro.');
         }
 
         if ($clientDest['id_compte'] === $compteSource['id']) {
-            return redirect()->to('/client/dashboard')->with('error', 'Vous ne pouvez pas transférer vers votre propre compte.');
+            return $this->jsonError('Vous ne pouvez pas transférer vers votre propre compte.');
         }
 
         try {
             $idTypeTransfert = 3;
             $frais = $this->calculerFrais($idTypeTransfert, $montant);
         } catch (RuntimeException $e) {
-            return redirect()->to('/client/dashboard')->with('error', $e->getMessage());
+            return $this->jsonError($e->getMessage());
         }
 
         $totalDebit = $montant + $frais;
@@ -239,7 +242,7 @@ class ClientController extends BaseController
 
         if ($soldeSource === null || (float) $soldeSource < $totalDebit) {
             $db->transComplete();
-            return redirect()->to('/client/dashboard')->with('error', 'Solde insuffisant. Requis : ' . number_format($totalDebit, 2, ',', ' ') . ' Ar (frais inclus).');
+            return $this->jsonError('Solde insuffisant. Requis : ' . number_format($totalDebit, 2, ',', ' ') . ' Ar (frais inclus).');
         }
 
         $debitOk = $this->compteModel->debiter($compteSource['id'], $totalDebit);

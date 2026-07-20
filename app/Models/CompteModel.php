@@ -13,7 +13,7 @@ class CompteModel extends Model
     protected $allowedFields = ['id_client', 'solde', 'date_creation'];
 
     // Dates
-    protected $useTimestamps = true;
+    protected $useTimestamps = false;
     protected $createdField = 'created_at';
     protected $updatedField = 'updated_at';
 
@@ -50,6 +50,11 @@ class CompteModel extends Model
     {
         $compte = $this->find($id_compte);
         return $compte ? $compte['solde'] : null;
+    }
+
+    public function getCompteForUpdate($id_compte)
+    {
+        return $this->where('id', $id_compte)->first();
     }
 
 
