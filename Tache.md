@@ -56,3 +56,14 @@ git restore --source remotes/origin/davida app/Views/auth
 - Fusion Git
 - Documentation
 - Livraison v1
+
+# Version 2 
+## Etudiant 1
+### Partie Opérateur
+- mise en place des gains par operateur 
+- Situation des montants à envoyer à chaque opérateur
+
+## Etudiant 2
+### Partie Client
+- ajout de frais de retrait par utilisateur
+- Envoi multiple 

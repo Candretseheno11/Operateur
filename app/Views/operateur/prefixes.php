@@ -52,6 +52,8 @@
                             <th class="ps-4 py-3 text-uppercase small text-muted">#</th>
                             <th class="py-3 text-uppercase small text-muted">Préfixe</th>
                             <th class="py-3 text-uppercase small text-muted">Statut</th>
+                            <th class="py-3 text-uppercase small text-muted">Type</th>
+                            <th class="py-3 text-uppercase small text-muted">% supplémentaire</th>
                             <th class="pe-4 py-3 text-uppercase small text-muted text-end">Actions</th>
                         </tr>
                     </thead>
@@ -78,9 +80,22 @@
                                             </span>
                                         <?php endif; ?>
                                     </td>
+                                    <td>
+                                        <?php if (!empty($p['est_autre_operateur'])): ?>
+                                            <span class="badge bg-warning text-dark">Autre opérateur</span>
+                                        <?php else: ?>
+                                            <span class="badge bg-light text-dark">Opérateur principal</span>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td>
+                                        <?= number_format((float) ($p['pourcentage_extra'] ?? 0), 2, ',', ' ') ?> %
+                                    </td>
                                     <td class="pe-4 text-end">
-                                        s
-
+                                        <a href="<?= base_url('/operateur/prefixes/edit/' . $p['id']) ?>"
+                                            class="btn btn-outline-primary btn-sm rounded-circle p-2 d-inline-flex align-items-center justify-content-center"
+                                            style="width: 34px; height: 34px;" title="Modifier">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
                                         <a href="<?= base_url('/operateur/prefixes/delete/' . $p['id']) ?>"
                                             class="btn btn-outline-danger btn-sm rounded-circle p-2 d-inline-flex align-items-center justify-content-center"
                                             style="width: 34px; height: 34px;"
@@ -92,7 +107,7 @@
                             <?php endforeach; ?>
                         <?php else: ?>
                             <tr>
-                                <td colspan="4" class="text-center py-5 text-muted">
+                                <td colspan="6" class="text-center py-5 text-muted">
                                     <i class="bi bi-inbox fs-1 d-block mb-2 opacity-50"></i>
                                     Aucun préfixe enregistré.
                                 </td>
