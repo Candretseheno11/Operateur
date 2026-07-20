@@ -33,7 +33,7 @@ CI_ENVIRONMENT = development
 
 # Database
 database.default.hostname = localhost
-database.default.database = conges_db
+database.default.database = mobilemoney.db
 database.default.username = root
 database.default.password = 
 database.default.DBDriver = MySQLi

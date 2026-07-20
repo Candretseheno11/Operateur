@@ -61,7 +61,7 @@ class Database extends Config
     //     * @var array<string, mixed>
 
     public array $default = [
-        'database' => WRITEPATH . 'fitspace.db',
+        'database' => WRITEPATH . 'mobilemoney.db',
         'DBDriver' => 'SQLite3',
         'DBPrefix' => '',
         'DBDebug' => true,

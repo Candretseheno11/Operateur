@@ -5,7 +5,7 @@
 
 Description
 ---
-Application MVC (CodeIgniter 4) pour gérer les congés : types de congés, demandes, soldes et workflow d'approbation.
+Application MVC (CodeIgniter 4) pour gérer un operateur mobile : transfert, depot 
 
 Prérequis
 ---
@@ -19,8 +19,8 @@ Installation (locale)
 ---
 1. Cloner le dépôt et se placer dans le répertoire :
    ```
-   git clone <url> "/home/christon/Code/Entreprise (Copie)"
-   cd "/home/christon/Code/Entreprise (Copie)"
+   git clone https://github.com/Candretseheno11/Operateur.git
+  
    ```
 
 2. Installer les dépendances PHP :
@@ -59,10 +59,12 @@ chmod 664 "writable/database.sqlite"
 
 Migrations et seeders
 ---
-Si le projet contient des migrations/seeders :
+Pour creer la base de donnee 
 ```
-php spark migrate
-php spark db:seed DatabaseSeeder
+mkdir database
+touch database/mobilemoney.db
+
+sqlite3 database/mobilemoney.db < base.sql
 ```
 Le seeder insère les types de congés et comptes demo. Si vous utilisez une DB vierge, exécuter ces commandes après avoir créé le fichier SQLite.
 
@@ -87,40 +89,3 @@ Tests
   ```
   php spark test
   ```
-
-Structure importante
----
-- public/ — point d’entrée (index.php)
-- app/Controllers/ — contrôleurs (ex : Admin.php, Suggestion.php)
-- app/Models/ — modèles (CongeModel, SoldeModel, TypeCongeModel)
-- app/Views/ — vues (Auth/login.php, Admin/soldes.php)
-- app/Database/Seeds/ — seeders (DatabaseSeeder)
-- writable/ — logs, fichiers runtime (ici le fichier SQLite recommandé)
-- spark — helper CLI
-- LICENSE — MIT
-
-Endpoints usuels
----
-- / — tableau de bord (Admin::index)
-- /auth/login — connexion
-- /admin/soldes — affichage des soldes
-- /admin/types — gestion types de congés
-- /conges — CRUD demandes de congé
-- /suggestions — soumissions utilisateurs
-
-Bonnes pratiques
----
-- Utiliser un chemin absolu pour SQLite dans .env pour éviter erreurs de chemin.
-- Ne pas stocker la DB de production dans le repo.
-- Sauvegarder régulièrement le fichier .sqlite.
-- Mettre writable/ accessible en écriture pour l’utilisateur du serveur web.
-
-Dépannage rapide
----
-- Erreur DB : vérifier le chemin dans `.env` et les permissions du fichier `.sqlite`.
-- Logs : consulter `writable/logs/`.
-- Migrations échouent : supprimer/renommer le fichier SQLite et relancer `php spark migrate`.
-
-Licence
----
-MIT — voir fichier LICENSE.# Operateur
