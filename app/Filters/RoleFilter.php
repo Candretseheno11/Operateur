@@ -10,14 +10,15 @@ class RoleFilter implements FilterInterface
     public function before(RequestInterface $request, $arguments = null)
     {
         $session = session();
-        $user = $session->get('client');
+        $client = $session->get('client');
 
+        $user = $session->get('user');
         // Doit être connecté (sécurité si le filtre est utilisé seul, sans "auth")
         if (!$user) {
-            return redirect()->to('/login')->with('erreur', 'Connectez-vous pour accéder à cette page');
+            return redirect()->to('/login')->with('error', 'Connectez-vous pour accéder à cette page');
         }
 
-        $role = $user['role'] ?? 'client';
+        $role = $user['role'];
 
         // $arguments contient le(s) rôle(s) autorisé(s) pour la route
         // ex: 'role' => ['operateur'] ou 'role' => ['operateur', 'client']

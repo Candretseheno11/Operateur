@@ -137,6 +137,13 @@
                             class="w-full py-3.5 px-4 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-extrabold rounded-2xl transition duration-300 shadow-lg shadow-emerald-600/10 focus:outline-none focus:ring-4 focus:ring-emerald-500/20">
                             Se connecter à l'espace
                         </button>
+
+                        <div class="mt-4 text-center">
+                            <a href="<?= base_url('login-operateur') ?>"
+                                class="text-sm font-semibold text-emerald-600 hover:text-emerald-700 hover:underline transition-colors">
+                                Se connecter en tant qu'opérateur
+                            </a>
+                        </div>
                     </div>
                 </form>
 

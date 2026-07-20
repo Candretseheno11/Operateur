@@ -1,91 +1,133 @@
-# Ooperateur Mobile 
-...existing code...
+# Operateur Mobile App
 
-# Operateur Mobile (CodeIgniter 4, SQLite)
+![PHP](https://img.shields.io/badge/PHP-8.2-777BB4?style=for-the-badge&logo=php&logoColor=white)
+![CodeIgniter](https://img.shields.io/badge/CodeIgniter-4.x-ef4223?style=for-the-badge)
+![License](https://img.shields.io/badge/License-MIT-green.svg)
 
-Description
----
-Application MVC (CodeIgniter 4) pour gérer un operateur mobile : transfert, depot 
+Operateur Mobile App est une application web développée avec PHP et CodeIgniter 4 pour gérer les opérations d’un opérateur mobile. Elle permet de traiter les transactions liées aux dépôts, retraits, transferts et de suivre les gains générés par les frais applicables.
 
-Prérequis
----
-- PHP 7.4+ (8.x recommandé)
+## 🚀 Objectif du projet
+
+L’objectif principal de cette application est de fournir une plateforme interne simple et efficace pour superviser les opérations financières d’un opérateur mobile, gérer les commissions et suivre les activités de transfert et de retrait.
+
+## ✨ Fonctionnalités principales
+
+- Gestion des opérations de dépôt et de retrait
+- Traitement des transferts entre clients
+- Suivi des gains générés par les frais de transaction
+- Affichage des statistiques liées aux opérations opérateur
+- Gestion des barèmes et préfixes associés aux transferts
+- Interface administrateur dédiée à l’exploitation des données
+
+## 🛠️ Technologies utilisées
+
+- PHP 8.2
+- CodeIgniter 4
+- MySQL / SQLite
+- HTML5 / CSS3 / Bootstrap
 - Composer
-- SQLite3 (binaires disponibles sur la machine)
-- Extensions PHP : sqlite3, pdo_sqlite, mbstring, json, intl
-- (Optionnel) Node.js / npm pour assets
+- PHPUnit
 
-Installation (locale)
----
-1. Cloner le dépôt et se placer dans le répertoire :
-   ```
+## ⚙️ Installation
+
+### Prérequis
+
+- PHP 8.2 ou supérieur
+- Composer
+- Base de données MySQL ou SQLite
+- Extension PHP compatible avec CodeIgniter 4
+
+### Étapes d’installation
+
+1. Cloner le dépôt :
+   ```bash
    git clone https://github.com/Candretseheno11/Operateur.git
   
    ```
 
 2. Installer les dépendances PHP :
-   ```
+   ```bash
    composer install
    ```
 
-3. Copier et éditer le fichier d’environnement :
-   ```
+3. Copier le fichier d’environnement :
+   ```bash
    cp env .env
    ```
-   Dans `.env` définir `app.baseURL` et config DB (exemple ci‑dessous).
 
-Configuration SQLite (exemple .env)
----
-Mettre le chemin absolu vers le fichier SQLite (recommandé dans `writable/` ou `app/Database/`).
+4. Configurer la base de données dans le fichier .env :
+   ```env
+   app.baseURL = 'http://localhost:8080'
 
-Exemple minimal à coller dans `.env` :
+   database.default.hostname = 'localhost'
+   database.default.database = 'mobilemoney.db'
+   database.default.username = 'root'
+   database.default.password = ''
+   database.default.DBDriver = 'MySQLi'
+   ```
+
+5. Importer la structure de la base de données si nécessaire.
+
+6. Démarrer l’application :
+   ```bash
+   php spark serve
+   ```
+
+L’application sera accessible à l’adresse : http://localhost:8080
+
+## ▶️ Utilisation
+
+Une fois le serveur lancé, vous pouvez :
+
+- consulter les opérations réalisées,
+- gérer les transferts et retraits,
+- analyser les gains générés,
+- administrer les paramètres liés aux frais et préfixes.
+
+## 📁 Structure du projet
+
+```text
+Regime/
+├── app/
+│   ├── Controllers/
+│   ├── Models/
+│   ├── Views/
+│   ├── Database/
+│   └── Config/
+├── public/
+├── system/
+├── tests/
+├── writable/
+└── composer.json
 ```
-app.baseURL = 'http://localhost:8080'
 
-database.default.DBDriver = SQLite3
-database.default.database = /home/christon/Code/Entreprise (Copie)/writable/database.sqlite
-database.default.DBPrefix =
-database.default.charset = utf8
-database.default.DBDebug = true
-```
+## 📸 Captures d’écran
 
-Créer le fichier SQLite (si non présent) :
-```
-mkdir -p writable
-touch "writable/database.sqlite"
-chmod 664 "writable/database.sqlite"
-```
-(Assurez-vous que l’utilisateur web peut écrire sur writable/)
+- Page d’accueil et authentification : 
+![Description de l'image](public/uploads/login.png)
+- Tableau de bord opérateur : 
+![Description de l'image](public/uploads/baremes.png)
 
-Migrations et seeders
----
-Pour creer la base de donnee 
-```
-mkdir database
-touch database/mobilemoney.db
+![Description de l'image](public/uploads/prefixe.png)
 
-sqlite3 database/mobilemoney.db < base.sql
-```
-Le seeder insère les types de congés et comptes demo. Si vous utilisez une DB vierge, exécuter ces commandes après avoir créé le fichier SQLite.
+![Description de l'image](public/uploads/operateur.png)
+- Gestion des opérations et gains : à venir
+![Description de l'image](public/uploads/client.png)
+![Description de l'image](public/uploads/depot.png)
 
-Démarrage en développement
----
-- Lancer le serveur de développement CodeIgniter :
-  ```
-  php spark serve
-  ```
-  Ou :
-  ```
-  php -S localhost:8080 -t public
-  ```
 
-Tests
----
-- PHPUnit (si configuré) :
-  ```
-  ./vendor/bin/phpunit --configuration phpunit.xml.dist
-  ```
-- Ou via spark (si utilisé) :
-  ```
-  php spark test
-  ```
+## 🔮 Améliorations futures
+
+- Ajout de tableaux de bord plus détaillés
+- Amélioration de l’interface utilisateur
+- Intégration d’alertes et notifications en temps réel
+- Ajout de logs et suivi avancé des transactions
+- Déploiement sur un environnement cloud
+
+## 👤 Auteur
+
+Christon
+
+## 📄 Licence
+
+Ce projet est sous licence MIT. Voir le fichier LICENSE pour plus de détails.

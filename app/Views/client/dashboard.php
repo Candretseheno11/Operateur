@@ -367,25 +367,35 @@
                                 class="bi bi-x-lg"></i></button>
                     </div>
                     <form id="formTransfert" onsubmit="handleFormSubmit(event, 'transfert')" class="p-6 space-y-4">
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Numéro
-                                de téléphone destinataire</label>
-                            <div class="relative rounded-xl shadow-sm">
-                                <div
-                                    class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-                                    <i class="bi bi-phone"></i>
-                                </div>
-                                <input type="text" id="phoneTransfert"
-                                    class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-semibold"
-                                    placeholder="ex: 0331234567" required>
+                        <div id="recipientsContainer">
+                            <div class="flex items-center gap-2">
+                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Numéros
+                                    de téléphone destinataires</label>
+                                <button type="button" onclick="addRecipient()"
+                                    class="text-xs font-semibold text-emerald-600 hover:text-emerald-700 mb-1.5">
+                                    <i class="bi bi-plus-circle me-1"></i>Ajouter un numéro
+                                </button>
                             </div>
-                            <p class="text-[10px] text-slate-400 mt-1 font-medium">Doit commencer par un préfixe valide
-                                (032, 033, 034, 037, 038).</p>
+                            <div class="recipient-group" data-index="0">
+                                <div class="relative rounded-xl shadow-sm">
+                                    <div
+                                        class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                                        <i class="bi bi-phone"></i>
+                                    </div>
+                                    <input type="text" class="phone-input w-full pl-10 pr-12 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-semibold"
+                                        placeholder="ex: 0331234567" required>
+                                    <button type="button" onclick="removeRecipient(this)"
+                                        class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-red-500">
+                                        <i class="bi bi-x-lg"></i>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
+                        <p class="text-[10px] text-slate-400 font-medium">Doit commencer par le même préfixe que votre numéro (même opérateur) : 032, 033, 034, 037, ou 038.</p>
                         <div>
                             <label
-                                class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Montant à
-                                transférer (Ar)</label>
+                                class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Montant total
+                                à transférer (Ar)</label>
                             <div class="relative rounded-xl shadow-sm">
                                 <input type="number" id="amountTransfert" min="100" step="1"
                                     class="w-full pl-4 pr-12 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-bold"
@@ -394,8 +404,23 @@
                                     class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-sm font-bold text-slate-400">
                                     Ar</div>
                             </div>
-                            <p class="text-[10px] text-slate-400 mt-1">Frais calculés selon le barème en vigueur.</p>
                         </div>
+                        <div class="rounded-xl border border-emerald-100 bg-emerald-50/70 px-4 py-3 text-sm text-slate-700 space-y-1">
+                            <div class="flex items-center justify-between gap-3">
+                                <span class="font-medium text-slate-500">Destinataires</span>
+                                <span id="transferRecipientsCount" class="font-bold text-slate-800">1</span>
+                            </div>
+                            <div class="flex items-center justify-between gap-3">
+                                <span class="font-medium text-slate-500">Montant par destinataire</span>
+                                <span id="transferAmountPerRecipient" class="font-bold text-emerald-700">0 Ar</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <input type="checkbox" id="includeFees"
+                                class="w-4 h-4 text-emerald-600 bg-gray-100 border-gray-300 rounded focus:ring-emerald-500">
+                            <label for="includeFees" class="text-sm font-medium text-slate-700">Inclure les frais dans le montant</label>
+                        </div>
+                        <p class="text-[10px] text-slate-400">Si coché, le montant total est divisé par le nombre de destinataires. Les frais seront déduits de votre solde en plus.</p>
                         <div class="pt-4 flex gap-3">
                             <button type="button" onclick="closeModal('modalTransfert')"
                                 class="flex-1 py-3 text-sm font-semibold text-slate-500 bg-slate-50 rounded-xl hover:bg-slate-100 transition">Annuler</button>
@@ -437,6 +462,7 @@
         let csrfHash = document.querySelector('meta[name="csrf-token-hash"]').content;
 
         let isSoldeVisible = true;
+        let recipientIndex = 1;
 
         function formatAriary(amount) {
             return Number(amount).toLocaleString('fr-FR', {
@@ -477,6 +503,10 @@
                 inner.classList.remove('translate-y-full', 'sm:scale-95');
                 inner.classList.add('translate-y-0', 'sm:scale-100');
             }, 10);
+
+            if (id === 'modalTransfert') {
+                updateTransferPreview();
+            }
         }
 
         function closeModal(id) {
@@ -516,6 +546,54 @@
             setTimeout(() => alertContainer.classList.add('hidden'), 300);
         }
 
+        function addRecipient() {
+            const container = document.getElementById('recipientsContainer');
+            const newGroup = document.createElement('div');
+            newGroup.className = 'recipient-group mt-3';
+            newGroup.dataset.index = recipientIndex;
+            newGroup.innerHTML = `
+                <div class="relative rounded-xl shadow-sm">
+                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                        <i class="bi bi-phone"></i>
+                    </div>
+                    <input type="text" class="phone-input w-full pl-10 pr-12 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-semibold"
+                        placeholder="ex: 0331234567" required>
+                    <button type="button" onclick="removeRecipient(this)"
+                        class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-red-500">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+            `;
+            container.appendChild(newGroup);
+            recipientIndex++;
+            updateTransferPreview();
+        }
+
+        function removeRecipient(button) {
+            const container = document.getElementById('recipientsContainer');
+            const groups = container.querySelectorAll('.recipient-group');
+            if (groups.length > 1) {
+                button.closest('.recipient-group').remove();
+                updateTransferPreview();
+            } else {
+                showAlert('Vous devez avoir au moins un destinataire', 'danger');
+            }
+        }
+
+        function getTransferRecipientCount() {
+            return document.querySelectorAll('#recipientsContainer .recipient-group').length;
+        }
+
+        function updateTransferPreview() {
+            const amountInput = document.getElementById('amountTransfert');
+            const amount = parseFloat(amountInput.value) || 0;
+            const recipientsCount = getTransferRecipientCount();
+            const amountPerRecipient = recipientsCount > 0 ? amount / recipientsCount : 0;
+
+            document.getElementById('transferRecipientsCount').textContent = recipientsCount;
+            document.getElementById('transferAmountPerRecipient').textContent = formatAriary(amountPerRecipient);
+        }
+
         // Filtrage / recherche côté client sur les lignes déjà rendues par PHP
         function filterTransactions() {
             const query = document.getElementById('txnSearch').value.toLowerCase().trim();
@@ -552,8 +630,15 @@
             } else if (type === 'retrait') {
                 formData.append('montant', document.getElementById('amountRetrait').value);
             } else if (type === 'transfert') {
-                formData.append('telephone', document.getElementById('phoneTransfert').value);
+                // Collect all phone numbers
+                const phoneInputs = document.querySelectorAll('.phone-input');
+                const phones = [];
+                phoneInputs.forEach(input => {
+                    if (input.value.trim()) phones.push(input.value.trim());
+                });
+                formData.append('telephones', JSON.stringify(phones));
                 formData.append('montant', document.getElementById('amountTransfert').value);
+                formData.append('includeFees', document.getElementById('includeFees').checked ? '1' : '0');
             }
 
             try {
@@ -571,6 +656,14 @@
                     showAlert(data.message, 'success');
                     setSolde(data.solde);
                     document.getElementById('form' + type.charAt(0).toUpperCase() + type.slice(1)).reset();
+                    // Reset recipients container to 1
+                    const container = document.getElementById('recipientsContainer');
+                    const groups = container.querySelectorAll('.recipient-group');
+                    groups.forEach((group, index) => {
+                        if (index > 0) group.remove();
+                    });
+                    recipientIndex = 1;
+                    updateTransferPreview();
                     closeModal('modal' + type.charAt(0).toUpperCase() + type.slice(1));
                     // Recharge la page pour afficher la nouvelle transaction dans l'historique
                     setTimeout(() => window.location.reload(), 900);
@@ -586,6 +679,10 @@
             renderBalance();
             document.getElementById('txnSearch').addEventListener('input', filterTransactions);
             document.getElementById('txnFilter').addEventListener('change', filterTransactions);
+            document.getElementById('amountTransfert').addEventListener('input', updateTransferPreview);
+            document.getElementById('includeFees').addEventListener('change', updateTransferPreview);
+            document.getElementById('recipientsContainer').addEventListener('input', updateTransferPreview);
+            updateTransferPreview();
         });
     </script>
 

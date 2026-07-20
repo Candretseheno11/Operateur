@@ -36,6 +36,29 @@
                             </div>
                         </div>
 
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold d-block">Type de préfixe</label>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="est_autre_operateur"
+                                    id="prefixTypePrincipal" value="0" checked>
+                                <label class="form-check-label fw-medium" for="prefixTypePrincipal">Opérateur
+                                    principal</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="est_autre_operateur"
+                                    id="prefixTypeAutre" value="1">
+                                <label class="form-check-label fw-medium" for="prefixTypeAutre">Autre opérateur</label>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">Pourcentage supplémentaire sur les transferts</label>
+                            <input type="number" name="pourcentage_extra" class="form-control" min="0" step="0.01"
+                                value="0">
+                            <div class="form-text">Exemple : 10 pour ajouter 10% au montant de la commission standard.
+                            </div>
+                        </div>
+
                         <hr class="my-4">
 
                         <div class="d-flex justify-content-end gap-2">

@@ -8,16 +8,16 @@ class PrefixeModel extends Model
 {
     protected $table = 'prefixes';
     protected $primaryKey = 'id';
-    protected $allowedFields = ['prefixe', 'actif'];
+    protected $allowedFields = ['prefixe', 'actif', 'est_autre_operateur', 'pourcentage_extra'];
 
-    // La table SQLite actuelle ne contient pas de colonnes created_at/updated_at.
-    // On désactive donc les timestamps automatiques pour éviter l'erreur lors de l'insertion.
     protected $useTimestamps = false;
     protected $dateFormat = 'datetime';
 
     protected $validationRules = [
         'prefixe' => 'required|is_unique[prefixes.prefixe,id,{id}]',
         'actif' => 'permit_empty|in_list[0,1]',
+        'est_autre_operateur' => 'permit_empty|in_list[0,1]',
+        'pourcentage_extra' => 'permit_empty|numeric',
     ];
 
     protected $validationMessages = [
@@ -45,10 +45,7 @@ class PrefixeModel extends Model
         return $this->find($id);
     }
 
-    /**
-     * Récupère un préfixe actif à partir d'un numéro de téléphone complet.
-     * Centralise ici la logique déjà dupliquée en SQL brut dans ClientModel::getPrefixeByNumber().
-     */
+
     public function getPrefixeByNumber(string $telephone)
     {
         $codePrefixe = substr($telephone, 0, 3);
@@ -66,6 +63,7 @@ class PrefixeModel extends Model
 
     public function updatePrefix($id, array $data)
     {
+        // Use the Model's built-in update method, which respects allowedFields
         return $this->update($id, $data);
     }
 }

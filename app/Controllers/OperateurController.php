@@ -79,11 +79,17 @@ class OperateurController extends BaseController
     {
         $gainRetrait = $this->transactionModel->getGainByRetrait();
         $gainTransfert = $this->transactionModel->getGainByTransfert();
+        $gainTransfertOperateur = $this->transactionModel->getGainByTransfertForOperatorType(0);
+        $gainTransfertAutresOperateurs = $this->transactionModel->getGainByTransfertForOperatorType(1);
+        $gainBreakdown = $this->transactionModel->getTransferGainBreakdown();
 
         $data = [
             'gainRetrait' => $gainRetrait['frais'] ?? 0,
             'gainTransfert' => $gainTransfert['frais'] ?? 0,
-            'gainTotal' => ($gainRetrait['frais'] ?? 0) + ($gainTransfert['frais'] ?? 0)
+            'gainTransfertOperateur' => $gainTransfertOperateur['frais'] ?? 0,
+            'gainTransfertAutresOperateurs' => $gainTransfertAutresOperateurs['frais'] ?? 0,
+            'gainTotal' => ($gainRetrait['frais'] ?? 0) + ($gainTransfert['frais'] ?? 0),
+            'gainBreakdown' => $gainBreakdown,
         ];
 
         return view('operateur/gains', $data);
@@ -126,6 +132,7 @@ class OperateurController extends BaseController
 
     }
 
+
     // Traitement de la mise à jour d'un barème (Modal)
     public function editBareme()
     {
@@ -149,7 +156,7 @@ class OperateurController extends BaseController
     // Suppression d'un barème
     public function deleteBareme($id)
     {
-        $baremeModel = new \App\Models\BaremeModel();
+        $baremeModel = new BaremeModel();
 
         if ($baremeModel->delete($id)) {
             return redirect()->to('/operateur/bareme')->with('success', 'Barème supprimé avec succès.');
@@ -169,6 +176,25 @@ class OperateurController extends BaseController
     }
 
 
+    public function editFromBareme($id)
+    {
+        $baremeModel = new BaremeModel();
+        $bareme = $baremeModel->getBaremeById($id);
+
+        if (!$bareme) {
+            return redirect()->to('/operateur/bareme')->with('error', 'Barème introuvable.');
+        }
+
+        $typesOperationsModel = new TypeOperationModel();
+        $typesOperations = $typesOperationsModel->select('id, libelle')->findAll();
+
+        return view('operateur/edit_bareme', [
+            'bareme' => $bareme,
+            'typesOperations' => $typesOperations
+        ]);
+    }
+
+
 
     public function editFormPrefix($id)
     {
@@ -183,6 +209,7 @@ class OperateurController extends BaseController
             'prefixe' => $prefixe
         ]);
     }
+
 
     public function addBareme()
     {
@@ -213,12 +240,17 @@ class OperateurController extends BaseController
     public function addPrefix()
     {
         $prefixeModel = new PrefixeModel();
+        $estAutreOperateur = (int) $this->request->getPost('est_autre_operateur');
+        $pourcentageExtra = (float) $this->request->getPost('pourcentage_extra');
+
         $data = [
             'prefixe' => $this->request->getPost('prefixe'),
-            'actif' => $this->request->getPost('actif')
+            'actif' => $this->request->getPost('actif'),
+            'est_autre_operateur' => $estAutreOperateur,
+            'pourcentage_extra' => $estAutreOperateur === 1 ? $pourcentageExtra : 0.0,
         ];
         $prefixeModel->addPrefix($data);
-        return redirect()->to('/operateur/prefixes');
+        return redirect()->to('/operateur/prefixes')->with('success', 'Préfixe ajouté avec succès.');
     }
 
     public function addFormPrefix()
@@ -226,7 +258,7 @@ class OperateurController extends BaseController
 
         return view('operateur/add_prefixe');
     }
-    public function editPrefix($id)
+    public function updatePrefix($id)
     {
         $prefixeModel = new PrefixeModel();
         $prefixe = $prefixeModel->getPrefixById($id);
@@ -235,13 +267,27 @@ class OperateurController extends BaseController
             return redirect()->to('/operateur/prefixes')->with('error', 'Préfixe introuvable.');
         }
 
+        $estAutreOperateur = (int) ($this->request->getPost('est_autre_operateur') ?? 0);
+        $pourcentageExtra = (float) ($this->request->getPost('pourcentage_extra') ?? 0);
+        $actif = (int) ($this->request->getPost('actif') ?? 1);
+
         $data = [
             'prefixe' => $this->request->getPost('prefixe'),
-            'actif' => $this->request->getPost('actif')
+            'actif' => $actif,
+            'est_autre_operateur' => $estAutreOperateur,
+            'pourcentage_extra' => $pourcentageExtra,
         ];
 
-        $prefixeModel->updatePrefix($id, $data);
-        return redirect()->to('/operateur/prefixes')->with('success', 'Préfixe mis à jour avec succès.');
+        // Force to skip validation for update - keep original value if new one is same
+        $prefixeModel->skipValidation(true);
+
+        if ($prefixeModel->update($id, $data)) {
+            return redirect()->to('/operateur/prefixes')->with('success', 'Préfixe mis à jour avec succès.');
+        } else {
+            $errors = $prefixeModel->errors();
+            $errorMsg = !empty($errors) ? implode(', ', $errors) : 'Erreur lors de la mise à jour.';
+            return redirect()->back()->withInput()->with('error', $errorMsg);
+        }
     }
 
     public function deletePrefix($id)

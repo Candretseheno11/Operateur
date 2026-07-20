@@ -211,3 +211,27 @@ VALUES
     (1, NULL, 2, 100000, 1000),
     (1, 2, 3, 50000, 600),
     (3, 4, 3, 100000, 1200);
+
+insert into
+    comptes (id_client, solde)
+values
+    (5, 1000000),
+    (6, 2000000),
+    (7, 1500000),
+    (8, 3000000),
+    (9, 5000000),
+    (12, 7500000);
+
+create table
+    user (
+        id integer primary key autoincrement,
+        username text not null unique,
+        password text not null,
+        role text check (role in ('admin', 'user')) default 'user',
+        date_creation datetime default current_timestamp
+    );
+
+insert into
+    user (username, password, role)
+values
+    ('admin', 'admin123', 'admin');

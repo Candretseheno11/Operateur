@@ -19,9 +19,9 @@ class ClientController extends BaseController
 {
     // Libellés attendus dans la table `types_operations`.
     // Si les libellés réels en base sont différents, adapte ces constantes.
-    private const LIBELLE_DEPOT = 'depot';
-    private const LIBELLE_RETRAIT = 'retrait';
-    private const LIBELLE_TRANSFERT = 'transfert';
+    private const LIBELLE_DEPOT = 'Depot';
+    private const LIBELLE_RETRAIT = 'Retrait';
+    private const LIBELLE_TRANSFERT = 'Transfert';
 
     private CompteModel $compteModel;
     private TransactionsModel $transactionsModel;
@@ -82,18 +82,18 @@ class ClientController extends BaseController
         $montant = (float) $this->request->getPost('montant');
 
         if ($montant <= 0) {
-            return redirect()->to('/client/dashboard')->with('error', 'Montant de dépôt invalide.');
+            return $this->jsonError('Montant de dépôt invalide.');
         }
 
         if (!$compte) {
-            return redirect()->to('/client/dashboard')->with('error', 'Compte introuvable.');
+            return $this->jsonError('Compte introuvable.');
         }
 
         try {
             $idTypeDepot = 1;
             $frais = $this->calculerFrais($idTypeDepot, $montant);
         } catch (RuntimeException $e) {
-            return redirect()->to('/client/dashboard')->with('error', $e->getMessage());
+            return $this->jsonError($e->getMessage());
         }
 
         $db = \Config\Database::connect();
@@ -114,10 +114,14 @@ class ClientController extends BaseController
 
         if ($db->transStatus() === false) {
             log_message('error', 'Echec dépôt compte ' . $compte['id'] . ' : ' . json_encode($db->error()));
-            return redirect()->to('/client/dashboard')->with('error', 'Une erreur est survenue lors du dépôt.');
+            return $this->jsonError('Une erreur est survenue lors du dépôt.');
         }
 
-        return redirect()->to('/client/dashboard')->with('success', "Dépôt de " . number_format($montant, 2, ',', ' ') . " Ar effectué avec succès.");
+        return $this->response->setJSON([
+            'success' => true,
+            'message' => "Dépôt de " . number_format($montant, 2, ',', ' ') . " Ar effectué avec succès.",
+            'solde' => (float) $this->compteModel->getSolde($compte['id']),
+        ]);
     }
 
     /**
@@ -128,19 +132,19 @@ class ClientController extends BaseController
         $montant = (float) $this->request->getPost('montant');
 
         if ($montant <= 0) {
-            return redirect()->to('/client/dashboard')->with('error', 'Montant de retrait invalide.');
+            return $this->jsonError('Montant de retrait invalide.');
         }
 
         $compte = $this->compteActuel();
         if (!$compte) {
-            return redirect()->to('/client/dashboard')->with('error', 'Compte introuvable.');
+            return $this->jsonError('Compte introuvable.');
         }
 
         try {
             $idTypeRetrait = 2;
             $frais = $this->calculerFrais($idTypeRetrait, $montant);
         } catch (RuntimeException $e) {
-            return redirect()->to('/client/dashboard')->with('error', $e->getMessage());
+            return $this->jsonError($e->getMessage());
         }
 
         $totalDebit = $montant + $frais;
@@ -153,8 +157,7 @@ class ClientController extends BaseController
 
         if (!$compteVerrouille || (float) $compteVerrouille['solde'] < $totalDebit) {
             $db->transComplete();
-            return redirect()->to('/client/dashboard')->with('error', 'Solde insuffisant pour couvrir le retrait et les frais de ' . number_format($frais, 2, ',', ' ') . ' Ar.');
-
+            return $this->jsonError('Solde insuffisant pour couvrir le retrait et les frais de ' . number_format($frais, 2, ',', ' ') . ' Ar.');
         }
 
         $debitOk = $this->compteModel->debiter($compte['id'], $totalDebit);
@@ -174,7 +177,7 @@ class ClientController extends BaseController
 
         if ($db->transStatus() === false || !$debitOk) {
             log_message('error', 'Echec retrait compte ' . $compte['id'] . ' : ' . json_encode($db->error()));
-            return redirect()->to('/client/dashboard')->with('error', 'Une erreur est survenue lors du retrait.');
+            return $this->jsonError('Une erreur est survenue lors du retrait.');
         }
 
         return $this->response->setJSON([
@@ -185,53 +188,88 @@ class ClientController extends BaseController
     }
 
     /**
-     * Transfert vers un autre client, identifié par son numéro de téléphone.
+     * Transfert vers un ou plusieurs clients, identifiés par leur numéro de téléphone.
      * Frais déterminé par le barème (id_type_operation + tranche de montant).
      */
     public function transfert()
     {
-        $telephoneDest = trim((string) $this->request->getPost('telephone'));
-        $montant = (float) $this->request->getPost('montant');
+        $telephonesJson = $this->request->getPost('telephones');
+        $montantTotal = (float) $this->request->getPost('montant');
+        $includeFees = $this->request->getPost('includeFees') === '1';
 
-        if (!preg_match('/^0(32|33|34|37|38)\d{7}$/', $telephoneDest)) {
-            return redirect()->to('/client/dashboard')->with('error', 'Numéro de téléphone destinataire invalide.');
+        $telephones = json_decode($telephonesJson, true);
+        if (empty($telephones) || !is_array($telephones)) {
+            return $this->jsonError('Veuillez ajouter au moins un destinataire.');
         }
 
-        if ($montant <= 0) {
-            return redirect()->to('/client/dashboard')->with('error', 'Montant de transfert invalide.');
+        if ($montantTotal <= 0) {
+            return $this->jsonError('Montant de transfert invalide.');
         }
 
         $compteSource = $this->compteActuel();
         if (!$compteSource) {
-            return redirect()->to('/client/dashboard')->with('error', 'Compte introuvable.');
+            return $this->jsonError('Compte introuvable.');
         }
 
-        $clientDest = $this->clientModel->getClientByTelephone($telephoneDest);
-        if (!$clientDest || empty($clientDest['id_compte'])) {
-            return redirect()->to('/client/dashboard')->with('error', 'Aucun compte actif ne correspond à ce numéro.');
+        $idTypeTransfert = 3;
+        $nombreDestinataires = count($telephones);
+        $montantParDestinataire = $montantTotal / $nombreDestinataires;
+
+        // Récupérer le préfixe du client source
+        $clientSource = session()->get('client');
+        $prefixeSource = substr($clientSource['telephone'], 0, 3);
+
+        // Vérifier tous les destinataires d'abord
+        $destinataires = [];
+        $totalFrais = 0;
+        foreach ($telephones as $tel) {
+            $tel = trim($tel);
+            if (!preg_match('/^0(32|33|34|37|38)\d{7}$/', $tel)) {
+                return $this->jsonError("Numéro de téléphone {$tel} invalide.");
+            }
+
+            $prefixeDest = substr($tel, 0, 3);
+            if ($prefixeDest !== $prefixeSource) {
+                return $this->jsonError("Transfert uniquement vers le même opérateur seulement (préfixe {$prefixeSource}). Numéro {$tel} a le préfixe {$prefixeDest}.");
+            }
+
+            $clientDest = $this->clientModel->getClientByTelephone($tel);
+            if (!$clientDest || empty($clientDest['id_compte'])) {
+                return $this->jsonError("Aucun compte actif ne correspond au numéro {$tel}.");
+            }
+            if ($clientDest['id_compte'] === $compteSource['id']) {
+                return $this->jsonError("Vous ne pouvez pas transférer vers votre propre compte ({$tel}).");
+            }
+
+            try {
+                $frais = $this->calculerFrais($idTypeTransfert, $montantParDestinataire);
+                $totalFrais += $frais;
+            } catch (RuntimeException $e) {
+                return $this->jsonError($e->getMessage());
+            }
+
+            $destinataires[] = [
+                'telephone' => $tel,
+                'client' => $clientDest,
+                'frais' => $frais
+            ];
         }
 
-        if ($clientDest['id_compte'] === $compteSource['id']) {
-            return redirect()->to('/client/dashboard')->with('error', 'Vous ne pouvez pas transférer vers votre propre compte.');
-        }
-
-        try {
-            $idTypeTransfert = 3;
-            $frais = $this->calculerFrais($idTypeTransfert, $montant);
-        } catch (RuntimeException $e) {
-            return redirect()->to('/client/dashboard')->with('error', $e->getMessage());
-        }
-
-        $totalDebit = $montant + $frais;
+        $totalDebit = $includeFees ? $montantTotal + $totalFrais : $montantTotal;
 
         $db = \Config\Database::connect();
         $db->transStart();
 
-        // Verrouiller les deux comptes dans un ordre constant (id croissant)
-        // pour éviter les interblocages si deux transferts croisés ont lieu en même temps.
-        $idsOrdonnes = [$compteSource['id'], $clientDest['id_compte']];
-        sort($idsOrdonnes);
-        foreach ($idsOrdonnes as $idCompte) {
+        // Collecter tous les IDs de comptes à verrouiller
+        $idsComptes = [$compteSource['id']];
+        foreach ($destinataires as $dest) {
+            $idsComptes[] = $dest['client']['id_compte'];
+        }
+        $idsComptes = array_unique($idsComptes);
+        sort($idsComptes);
+
+        // Verrouiller les comptes dans l'ordre
+        foreach ($idsComptes as $idCompte) {
             $this->compteModel->getCompteForUpdate($idCompte);
         }
 
@@ -239,33 +277,39 @@ class ClientController extends BaseController
 
         if ($soldeSource === null || (float) $soldeSource < $totalDebit) {
             $db->transComplete();
-            return redirect()->to('/client/dashboard')->with('error', 'Solde insuffisant. Requis : ' . number_format($totalDebit, 2, ',', ' ') . ' Ar (frais inclus).');
+            return $this->jsonError('Solde insuffisant. Requis : ' . number_format($totalDebit, 2, ',', ' ') . ' Ar.');
         }
 
+        // Débiter le compte source
         $debitOk = $this->compteModel->debiter($compteSource['id'], $totalDebit);
-        $creditOk = $debitOk && $this->compteModel->crediter($clientDest['id_compte'], $montant);
 
-        if ($debitOk && $creditOk) {
-            $this->transactionsModel->insert([
-                'id_compte_source' => $compteSource['id'],
-                'id_compte_destination' => $clientDest['id_compte'],
-                'id_type_operation' => $idTypeTransfert,
-                'montant' => $montant,
-                'date_transaction' => date('Y-m-d H:i:s'),
-                'frais' => $frais,
-            ]);
+        if ($debitOk) {
+            // Créditer chaque destinataire et créer une transaction
+            foreach ($destinataires as $dest) {
+                $creditOk = $this->compteModel->crediter($dest['client']['id_compte'], $montantParDestinataire);
+                if ($creditOk) {
+                    $this->transactionsModel->insert([
+                        'id_compte_source' => $compteSource['id'],
+                        'id_compte_destination' => $dest['client']['id_compte'],
+                        'id_type_operation' => $idTypeTransfert,
+                        'montant' => $montantParDestinataire,
+                        'date_transaction' => date('Y-m-d H:i:s'),
+                        'frais' => $dest['frais'],
+                    ]);
+                }
+            }
         }
 
         $db->transComplete();
 
-        if ($db->transStatus() === false || !$debitOk || !$creditOk) {
-            log_message('error', 'Echec transfert ' . $compteSource['id'] . ' -> ' . $clientDest['id_compte'] . ' : ' . json_encode($db->error()));
+        if ($db->transStatus() === false || !$debitOk) {
+            log_message('error', 'Echec transfert multiple : ' . json_encode($db->error()));
             return $this->jsonError('Une erreur est survenue lors du transfert.');
         }
 
         return $this->response->setJSON([
             'success' => true,
-            'message' => "Transfert de " . number_format($montant, 2, ',', ' ') . " Ar envoyé à {$telephoneDest}.",
+            'message' => "Transfert de " . number_format($montantTotal, 2, ',', ' ') . " Ar envoyé à {$nombreDestinataires} destinataire(s).",
             'solde' => (float) $this->compteModel->getSolde($compteSource['id']),
         ]);
     }
