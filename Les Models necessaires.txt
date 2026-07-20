@@ -1,0 +1,12 @@
+Les Models necessaires :
+UserModel
+HealthModel
+ObjectifModel
+UserObjectifModel
+RegimeModel
+ActiviteModel
+SuggestionModel
+WalletModel
+CodeModel
+TransactionModel
+AdminModel

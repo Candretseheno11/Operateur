@@ -1,0 +1,54 @@
+========================================================================
+DOCUMENT DE CONCEPTION TECHNIQUE : MODULE DES RÉGIMES ET SUGGESTIONS
+========================================================================
+
+1. OBJECTIF GÉNÉRAL
+-------------------
+L'application doit suggérer un régime alimentaire et une activité sportive 
+adaptés aux objectifs de l'utilisateur (genre, taille, poids).
+Le système doit afficher automatiquement l'IMC après la saisie.
+
+2. LOGIQUE DES SUGGESTIONS PAR OBJECTIF
+---------------------------------------
+
+A. OBJECTIF : "AUGMENTER SON POIDS"
+   - Filtre SQL : Sélectionner les régimes où variation_poids > 0.
+   - Tri : Classer par efficacité (variation la plus élevée en premier).
+
+B. OBJECTIF : "RÉDUIRE SON POIDS"
+   - Filtre SQL : Sélectionner les régimes où variation_poids < 0.
+   - Tri : Classer par efficacité (perte la plus élevée en premier).
+
+C. OBJECTIF : "ATTEINDRE SON IMC IDÉAL" 
+   Il s'agit d'un calcul dynamique basé sur une cible de santé (IMC 22.0).
+   
+   1. Calcul du Poids Idéal : 
+      Poids_Ideal = 22.0 * (Taille * Taille)
+   
+   2. Calcul de l'écart à combler (Delta) :
+      Delta = Poids_Ideal - Poids_Actuel
+   
+   3. Matching par Proximité :
+      Le système doit proposer le régime dont la 'variation_poids' se 
+      rapproche le plus du Delta calculé.
+      Requête SQL recommandée :
+      "SELECT *, ABS(variation_poids - $Delta) AS difference 
+       FROM regimes 
+       ORDER BY difference ASC 
+       LIMIT 1;"
+
+3. COUPLAGE RÉGIME + SPORT
+--------------------------
+Chaque suggestion doit impérativement associer un régime avec l'activité 
+sportive nécessaire pendant la durée définie[cite: 30].
+- La composition du régime doit être affichée (% viande, poisson, volaille).
+- Le prix doit varier selon la durée.
+
+4. RÈGLE DE GESTION "OPTION GOLD"
+---------------------------------
+- L'utilisateur peut payer une option Gold.
+- Si l'utilisateur est Gold (is_gold = TRUE), appliquer une remise de 15% 
+  sur tous les régimes lors de l'affichage.
+- Formule : Prix_Final = Prix_Regime * 0.85.
+
+
