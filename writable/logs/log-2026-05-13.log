@@ -1,0 +1,10 @@
+CRITICAL - 2026-05-13 10:20:42 --> CodeIgniter\Exceptions\BadMethodCallException: Call to undefined method App\Models\CongeModel::getAbsentsDuJour
+[Method: GET, Route: admin]
+in SYSTEMPATH/Model.php on line 761.
+ 1 APPPATH/Controllers/Admin.php(36): CodeIgniter\Model->__call()
+ 2 SYSTEMPATH/CodeIgniter.php(951): App\Controllers\Admin->index()
+ 3 SYSTEMPATH/CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController()
+ 4 SYSTEMPATH/CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
+ 5 SYSTEMPATH/Boot.php(417): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
+ 7 FCPATH/index.php(59): CodeIgniter\Boot::bootWeb()
