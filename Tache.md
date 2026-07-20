@@ -10,7 +10,7 @@ Nom : RAKOTOARIMANANA  Davida Fiderana
 ---
 
 # Version 1
-
+git restore --source remotes/origin/davida app/Views/auth
 ## Etudiant 1
 
 ### Base de données
@@ -19,6 +19,11 @@ Nom : RAKOTOARIMANANA  Davida Fiderana
 - Création des tables
 - Contraintes
 - Données de test
+
+### Mise en place architecture 
+- Conception des Modeles 
+- Mise en place des Routes
+- Mise en place des Controllers
 
 ### Partie Opérateur
 
