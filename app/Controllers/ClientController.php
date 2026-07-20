@@ -1,118 +1,364 @@
 <?php
+
 namespace App\Controllers;
+
+use App\Models\BaremeModel;
+use App\Models\ClientModel;
 use App\Models\CompteModel;
-use App\Models\PrefixeModel;
-use App\Models\BaremeFraisModel;
-use App\Models\OperationModel;
+use App\Models\TransactionsModel;
+use App\Models\TypeOperationModel;
+use RuntimeException;
 
-class ClientController extends BaseController {
-    
-    public function login() {
-        return view('client/login');
+/**
+ * Gère les opérations du client connecté :
+ * voir le solde, dépôt automatique, retrait automatique, transfert, historique.
+ *
+ * Protégé par les filtres 'auth' + 'role:client' (voir Config/Filters.php et Routes.php).
+ */
+class ClientController extends BaseController
+{
+    // Libellés attendus dans la table `types_operations`.
+    // Si les libellés réels en base sont différents, adapte ces constantes.
+    private const LIBELLE_DEPOT = 'depot';
+    private const LIBELLE_RETRAIT = 'retrait';
+    private const LIBELLE_TRANSFERT = 'transfert';
+
+    private CompteModel $compteModel;
+    private TransactionsModel $transactionsModel;
+    private ClientModel $clientModel;
+    private TypeOperationModel $typeOperationModel;
+    private BaremeModel $baremeModel;
+
+    public function __construct()
+    {
+        $this->compteModel = new CompteModel();
+        $this->transactionsModel = new TransactionsModel();
+        $this->clientModel = new ClientModel();
+        $this->typeOperationModel = new TypeOperationModel();
+        $this->baremeModel = new BaremeModel();
     }
 
-    public function autoLogin() {
-        $session = session();
-        $phone = $this->request->getPost('numero_telephone');
-        
-        // Extraction du préfixe (ex: les 3 premiers chiffres)
-        $subPrefix = substr($phone, 0, 3);
-        $prefixeModel = new PrefixeModel();
-        
-        if (!$prefixeModel->where('prefixe', $subPrefix)->first()) {
-            return redirect()->back()->with('error', 'Opérateur non supporté par ce numéro.');
-        }
+    /**
+     * Page d'aperçu : solde + historique récent.
+     */
+    public function dashboard()
+    {
+        $client = session()->get('client');
+        $compte = $this->compteModel->getCompteByClientId($client['id']);
 
-        // Login automatique : création à la volée s'il n'existe pas
-        $compteModel = new CompteModel();
-        $compte = $compteModel->where('numero_telephone', $phone)->first();
-        
         if (!$compte) {
-            $compteModel->insert(['numero_telephone' => $phone, 'solde' => 0.0]);
+            return redirect()->to('/login')->with('error', 'Compte introuvable.');
         }
 
-        $session->set('client_phone', $phone);
-        return redirect()->to('/client/space');
+        return view('client/dashboard', [
+            'client' => $client,
+            'compte' => $compte,
+            'transactions' => $this->transactionsModel->getTransactionsByCompte($compte['id']),
+        ]);
     }
 
-    public function space() {
-        $session = session();
-        $phone = $session->get('client_phone');
-        if (!$phone) return redirect()->to('/client/login');
-
-        $compteModel = new CompteModel();
-        $operationModel = new OperationModel();
-
-        $data['compte'] = $compteModel->where('numero_telephone', $phone)->first();
-        $data['historique'] = $operationModel->where('numero_expediteur', $phone)
-                                             ->orWhere('numero_destinataire', $phone)
-                                             ->orderBy('date_operation', 'DESC')
-                                             ->findAll();
-
-        return view('client/space', $data);
-    }
-
-    public function transaction() {
-        $session = session();
-        $expediteur = $session->get('client_phone');
-        if (!$expediteur) return redirect()->to('/client/login');
-
-        $type = $this->request->getPost('type'); // 'depot', 'retrait', 'transfert'
-        $montant = floatval($this->request->getPost('montant'));
-        $destinataire = $this->request->getPost('destinataire') ?: null;
-
-        $compteModel = new CompteModel();
-        $baremeModel = new BaremeFraisModel();
-        $operationModel = new OperationModel();
-
-        $compteExp = $compteModel->where('numero_telephone', $expediteur)->first();
-
-        // Mapping ID opération : 1 = depot, 2 = retrait, 3 = transfert
-        $typeIds = ['depot' => 1, 'retrait' => 2, 'transfert' => 3];
-        $idTypeOp = $typeIds[$type];
-
-        // Calcul des frais
-        $fraisRow = $baremeModel->getFrais($idTypeOp, $montant);
-        $frais = $fraisRow ? floatval($fraisRow['frais']) : 0.0;
-
-        // Logique métier des transactions
-        if ($type === 'depot') {
-            $compteModel->update($compteExp['id'], ['solde' => $compteExp['solde'] + $montant]);
-        } 
-        elseif ($type === 'retrait') {
-            if ($compteExp['solde'] < ($montant + $frais)) {
-                return redirect()->back()->with('error', 'Solde insuffisant (Frais inclus).');
-            }
-            $compteModel->update($compteExp['id'], ['solde' => $compteExp['solde'] - ($montant + $frais)]);
-        } 
-        elseif ($type === 'transfert') {
-            if ($compteExp['solde'] < ($montant + $frais)) {
-                return redirect()->back()->with('error', 'Solde insuffisant pour le transfert.');
-            }
-            $compteDest = $compteModel->where('numero_telephone', $destinataire)->first();
-            if (!$compteDest) {
-                return redirect()->back()->with('error', 'Le numéro destinataire n\'existe pas.');
-            }
-            
-            // Débit source, Crédit cible
-            $compteModel->update($compteExp['id'], ['solde' => $compteExp['solde'] - ($montant + $frais)]);
-            $compteModel->update($compteDest['id'], ['solde' => $compteDest['solde'] + $montant]);
+    /**
+     * Endpoint AJAX : voir le solde à jour.
+     */
+    public function solde()
+    {
+        $compte = $this->compteActuel();
+        if (!$compte) {
+            return $this->jsonError('Compte introuvable.', 404);
         }
 
-        // Sauvegarde dans l'historique des transactions
-        $operationModel->insert([
-            'id_type_operation'  => $idTypeOp,
-            'numero_expediteur'   => $expediteur,
-            'numero_destinataire' => $destinataire,
-            'montant'             => $montant,
-            'frais'               => $frais
+        return $this->response->setJSON([
+            'success' => true,
+            'solde' => (float) $compte['solde'],
+        ]);
+    }
+
+    /**
+     * Dépôt automatique (supposé instantané, sans validation externe).
+     */
+    public function deposer()
+    {
+        $montant = (float) $this->request->getPost('montant');
+
+        if ($montant <= 0) {
+            return $this->jsonError('Montant de dépôt invalide.');
+        }
+
+        $compte = $this->compteActuel();
+        if (!$compte) {
+            return $this->jsonError('Compte introuvable.', 404);
+        }
+
+        try {
+            $idTypeDepot = $this->getTypeOperationId(self::LIBELLE_DEPOT);
+            $frais = $this->calculerFrais($idTypeDepot, $montant);
+        } catch (RuntimeException $e) {
+            return $this->jsonError($e->getMessage());
+        }
+
+        $db = \Config\Database::connect();
+        $db->transStart();
+
+        $this->compteModel->crediter($compte['id'], $montant);
+
+        $this->transactionsModel->insert([
+            'id_compte_source' => null,
+            'id_compte_destination' => $compte['id'],
+            'id_type_operation' => $idTypeDepot,
+            'montant' => $montant,
+            'date_transaction' => date('Y-m-d H:i:s'),
+            'frais' => $frais,
         ]);
 
-        return redirect()->to('/client/space')->with('success', 'Opération réussie !');
+        $db->transComplete();
+
+        if ($db->transStatus() === false) {
+            log_message('error', 'Echec dépôt compte ' . $compte['id'] . ' : ' . json_encode($db->error()));
+            return $this->jsonError('Une erreur est survenue lors du dépôt.');
+        }
+
+        return $this->response->setJSON([
+            'success' => true,
+            'message' => "Dépôt de " . number_format($montant, 2, ',', ' ') . " Ar effectué avec succès.",
+            'solde' => (float) $this->compteModel->getSolde($compte['id']),
+        ]);
     }
 
-    public function logout() {
-        session()->destroy();
-        return redirect()->to('/client/login');
+    /**
+     * Retrait automatique. Frais déterminé par le barème (id_type_operation + tranche de montant).
+     */
+    public function retirer()
+    {
+        $montant = (float) $this->request->getPost('montant');
+
+        if ($montant <= 0) {
+            return $this->jsonError('Montant de retrait invalide.');
+        }
+
+        $compte = $this->compteActuel();
+        if (!$compte) {
+            return $this->jsonError('Compte introuvable.', 404);
+        }
+
+        try {
+            $idTypeRetrait = $this->getTypeOperationId(self::LIBELLE_RETRAIT);
+            $frais = $this->calculerFrais($idTypeRetrait, $montant);
+        } catch (RuntimeException $e) {
+            return $this->jsonError($e->getMessage());
+        }
+
+        $totalDebit = $montant + $frais;
+
+        $db = \Config\Database::connect();
+        $db->transStart();
+
+        // Verrou de la ligne pour empêcher un double retrait simultané
+        $compteVerrouille = $this->compteModel->getCompteForUpdate($compte['id']);
+
+        if (!$compteVerrouille || (float) $compteVerrouille['solde'] < $totalDebit) {
+            $db->transComplete();
+            return $this->jsonError(
+                'Solde insuffisant pour couvrir le retrait et les frais de ' . number_format($frais, 2, ',', ' ') . ' Ar.'
+            );
+        }
+
+        $debitOk = $this->compteModel->debiter($compte['id'], $totalDebit);
+
+        if ($debitOk) {
+            $this->transactionsModel->insert([
+                'id_compte_source' => $compte['id'],
+                'id_compte_destination' => null,
+                'id_type_operation' => $idTypeRetrait,
+                'montant' => $montant,
+                'date_transaction' => date('Y-m-d H:i:s'),
+                'frais' => $frais,
+            ]);
+        }
+
+        $db->transComplete();
+
+        if ($db->transStatus() === false || !$debitOk) {
+            log_message('error', 'Echec retrait compte ' . $compte['id'] . ' : ' . json_encode($db->error()));
+            return $this->jsonError('Une erreur est survenue lors du retrait.');
+        }
+
+        return $this->response->setJSON([
+            'success' => true,
+            'message' => "Retrait de " . number_format($montant, 2, ',', ' ') . " Ar effectué. (Frais : " . number_format($frais, 2, ',', ' ') . " Ar)",
+            'solde' => (float) $this->compteModel->getSolde($compte['id']),
+        ]);
+    }
+
+    /**
+     * Transfert vers un autre client, identifié par son numéro de téléphone.
+     * Frais déterminé par le barème (id_type_operation + tranche de montant).
+     */
+    public function transferer()
+    {
+        $telephoneDest = trim((string) $this->request->getPost('telephone'));
+        $montant = (float) $this->request->getPost('montant');
+
+        if (!preg_match('/^0(32|33|34|37|38)\d{7}$/', $telephoneDest)) {
+            return $this->jsonError('Numéro de téléphone destinataire invalide.');
+        }
+
+        if ($montant <= 0) {
+            return $this->jsonError('Montant de transfert invalide.');
+        }
+
+        $compteSource = $this->compteActuel();
+        if (!$compteSource) {
+            return $this->jsonError('Compte introuvable.', 404);
+        }
+
+        $clientDest = $this->clientModel->getClientByTelephone($telephoneDest);
+        if (!$clientDest || empty($clientDest['id_compte'])) {
+            return $this->jsonError('Aucun compte actif ne correspond à ce numéro.');
+        }
+
+        if ($clientDest['id_compte'] === $compteSource['id']) {
+            return $this->jsonError('Vous ne pouvez pas transférer vers votre propre compte.');
+        }
+
+        try {
+            $idTypeTransfert = $this->getTypeOperationId(self::LIBELLE_TRANSFERT);
+            $frais = $this->calculerFrais($idTypeTransfert, $montant);
+        } catch (RuntimeException $e) {
+            return $this->jsonError($e->getMessage());
+        }
+
+        $totalDebit = $montant + $frais;
+
+        $db = \Config\Database::connect();
+        $db->transStart();
+
+        // Verrouiller les deux comptes dans un ordre constant (id croissant)
+        // pour éviter les interblocages si deux transferts croisés ont lieu en même temps.
+        $idsOrdonnes = [$compteSource['id'], $clientDest['id_compte']];
+        sort($idsOrdonnes);
+        foreach ($idsOrdonnes as $idCompte) {
+            $this->compteModel->getCompteForUpdate($idCompte);
+        }
+
+        $soldeSource = $this->compteModel->getSolde($compteSource['id']);
+
+        if ($soldeSource === null || (float) $soldeSource < $totalDebit) {
+            $db->transComplete();
+            return $this->jsonError(
+                'Solde insuffisant. Requis : ' . number_format($totalDebit, 2, ',', ' ') . ' Ar (frais inclus).'
+            );
+        }
+
+        $debitOk = $this->compteModel->debiter($compteSource['id'], $totalDebit);
+        $creditOk = $debitOk && $this->compteModel->crediter($clientDest['id_compte'], $montant);
+
+        if ($debitOk && $creditOk) {
+            $this->transactionsModel->insert([
+                'id_compte_source' => $compteSource['id'],
+                'id_compte_destination' => $clientDest['id_compte'],
+                'id_type_operation' => $idTypeTransfert,
+                'montant' => $montant,
+                'date_transaction' => date('Y-m-d H:i:s'),
+                'frais' => $frais,
+            ]);
+        }
+
+        $db->transComplete();
+
+        if ($db->transStatus() === false || !$debitOk || !$creditOk) {
+            log_message('error', 'Echec transfert ' . $compteSource['id'] . ' -> ' . $clientDest['id_compte'] . ' : ' . json_encode($db->error()));
+            return $this->jsonError('Une erreur est survenue lors du transfert.');
+        }
+
+        return $this->response->setJSON([
+            'success' => true,
+            'message' => "Transfert de " . number_format($montant, 2, ',', ' ') . " Ar envoyé à {$telephoneDest}.",
+            'solde' => (float) $this->compteModel->getSolde($compteSource['id']),
+        ]);
+    }
+
+    /**
+     * Historique complet (avec filtre optionnel par type d'opération).
+     * ?type=depot|retrait|transfert
+     */
+    public function historique()
+    {
+        $compte = $this->compteActuel();
+        if (!$compte) {
+            return $this->jsonError('Compte introuvable.', 404);
+        }
+
+        $typeParam = $this->request->getGet('type');
+        $mapLibelles = [
+            'depot' => self::LIBELLE_DEPOT,
+            'retrait' => self::LIBELLE_RETRAIT,
+            'transfert' => self::LIBELLE_TRANSFERT,
+        ];
+
+        if (isset($mapLibelles[$typeParam])) {
+            $idType = $this->typeOperationModel->getIdByLibelle($mapLibelles[$typeParam]);
+            $transactions = $idType
+                ? $this->transactionsModel->getTransactionsByCompteAndType($compte['id'], $idType)
+                : [];
+        } else {
+            $transactions = $this->transactionsModel->getTransactionsByCompte($compte['id']);
+        }
+
+        return $this->response->setJSON([
+            'success' => true,
+            'transactions' => $transactions,
+        ]);
+    }
+
+    /**
+     * Récupère le compte du client actuellement connecté (via la session).
+     */
+    private function compteActuel(): ?array
+    {
+        $client = session()->get('client');
+        if (!$client) {
+            return null;
+        }
+
+        return $this->compteModel->getCompteByClientId($client['id']);
+    }
+
+    /**
+     * Résout l'ID d'un type d'opération à partir de son libellé.
+     * Lève une exception claire si le libellé n'existe pas en base
+     * (mauvaise config, plutôt que d'insérer une transaction avec un ID invalide).
+     */
+    private function getTypeOperationId(string $libelle): int
+    {
+        $id = $this->typeOperationModel->getIdByLibelle($libelle);
+
+        if ($id === null) {
+            throw new RuntimeException("Type d'opération \"{$libelle}\" introuvable en base (table types_operations).");
+        }
+
+        return $id;
+    }
+
+    /**
+     * Calcule le frais applicable via le barème (id_type_operation + tranche de montant).
+     * Lève une exception si aucun palier ne couvre ce montant.
+     */
+    private function calculerFrais(int $idTypeOperation, float $montant): float
+    {
+        $bareme = $this->baremeModel->getBaremeForMontant($idTypeOperation, $montant);
+
+        if ($bareme === null) {
+            throw new RuntimeException('Aucun barème configuré pour ce montant.');
+        }
+
+        return (float) $bareme['frais'];
+    }
+
+    private function jsonError(string $message, int $statusCode = 400)
+    {
+        return $this->response->setStatusCode($statusCode)->setJSON([
+            'success' => false,
+            'message' => $message,
+        ]);
     }
 }
