@@ -29,12 +29,12 @@
                             <label class="form-label fw-semibold d-block">Statut du préfixe</label>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="actif" id="actif1" value="1"
-                                    <?= !empty($prefixe['actif']) ? 'checked' : '' ?>>
+                                    <?= (int) ($prefixe['actif'] ?? 0) === 1 ? 'checked' : '' ?> required>
                                 <label class="form-check-label text-success fw-medium" for="actif1">Actif</label>
                             </div>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="actif" id="actif0" value="0"
-                                    <?= empty($prefixe['actif']) ? 'checked' : '' ?>>
+                                    <?= (int) ($prefixe['actif'] ?? 0) === 0 ? 'checked' : '' ?> required>
                                 <label class="form-check-label text-secondary fw-medium" for="actif0">Inactif</label>
                             </div>
                         </div>
@@ -43,13 +43,13 @@
                             <label class="form-label fw-semibold d-block">Type de préfixe</label>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="est_autre_operateur"
-                                    id="prefixTypePrincipal" value="0" <?= empty($prefixe['est_autre_operateur']) ? 'checked' : '' ?>>
+                                    id="prefixTypePrincipal" value="0" <?= (int)($prefixe['est_autre_operateur'] ?? 0) === 0 ? 'checked' : '' ?> required>
                                 <label class="form-check-label fw-medium" for="prefixTypePrincipal">Opérateur
                                     principal</label>
                             </div>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="est_autre_operateur"
-                                    id="prefixTypeAutre" value="1" <?= !empty($prefixe['est_autre_operateur']) ? 'checked' : '' ?>>
+                                    id="prefixTypeAutre" value="1" <?= (int)($prefixe['est_autre_operateur'] ?? 0) === 1 ? 'checked' : '' ?> required>
                                 <label class="form-check-label fw-medium" for="prefixTypeAutre">Autre opérateur</label>
                             </div>
                         </div>
@@ -57,7 +57,7 @@
                         <div class="mb-4">
                             <label class="form-label fw-semibold">Pourcentage supplémentaire sur les transferts</label>
                             <input type="number" name="pourcentage_extra" class="form-control" min="0" step="0.01"
-                                value="<?= esc($prefixe['pourcentage_extra'] ?? 0) ?>">
+                                value="<?= esc($prefixe['pourcentage_extra'] ?? 0) ?>" required>
                             <div class="form-text">Exemple : 10 pour ajouter 10% au montant de la commission standard.
                             </div>
                         </div>

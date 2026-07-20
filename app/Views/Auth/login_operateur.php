@@ -71,8 +71,13 @@
                     class="inline-flex items-center justify-center h-14 w-14 bg-emerald-50 border border-emerald-100 rounded-2xl text-emerald-600 shadow-sm mb-4">
                     <i class="bi bi-wallet2 text-2xl"></i>
                 </div>
-                <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight">E-MONEY CLIENT</h2>
-                <p class="text-sm text-slate-500 mt-1.5">Gérez votre solde et vos transferts instantanément</p>
+                <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight">
+                    E-MONEY CLIENT
+                </h2>
+
+                <p class="text-sm text-slate-500 mt-1.5">
+                    Gérez votre solde et vos transferts instantanément
+                </p>
             </div>
 
             <!-- Corps du formulaire -->
@@ -96,57 +101,65 @@
                 <?php endif; ?>
 
                 <!-- Formulaire de Connexion -->
-                <form action="<?= base_url('login') ?>" method="post" class="space-y-6">
+                <form action="<?= base_url('login-operateur') ?>" method="post" class="space-y-6">
                     <?= csrf_field() ?>
 
+                    <!-- Username -->
                     <div>
-                        <div class="flex justify-between items-center mb-2">
-                            <label for="telephone"
-                                class="block text-xs font-bold text-slate-500 uppercase tracking-wider">Numéro de
-                                téléphone</label>
-                            <!-- Badge dynamique d'identification de l'opérateur (Orange, Airtel, Telma) -->
-                            <span id="operatorBadge"
-                                class="hidden text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider border transition-all duration-300"></span>
-                        </div>
+                        <label for="username"
+                            class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+                            Adresse e-mail
+                        </label>
 
                         <div
                             class="relative flex rounded-2xl shadow-sm bg-slate-100/50 border border-slate-200/60 focus-within:bg-white focus-within:border-emerald-500 focus-within:ring-4 focus-within:ring-emerald-500/10 transition-all duration-200">
-                            <span
-                                class="inline-flex items-center px-4 rounded-l-2xl border-r border-slate-200 text-slate-500 text-sm font-bold bg-slate-50">
-                                +261
-                            </span>
-                            <input type="text" id="telephone" name="telephone"
-                                class="block w-full pl-4 pr-12 py-3.5 bg-transparent border-0 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-0 text-sm font-semibold tracking-wider"
-                                placeholder="033 12 345 67" required autofocus>
-                            <!-- Icône d'état de saisie -->
-                            <div
-                                class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-slate-400">
-                                <i id="statusIcon" class="bi bi-phone"></i>
-                            </div>
-                        </div>
 
-                        <p class="text-[11px] text-slate-500 mt-2.5 leading-relaxed">
-                            <i class="bi bi-info-circle me-1 text-slate-400"></i>
-                            Saisissez votre numéro de téléphone. Si le compte n'existe pas encore, il sera créé
-                            automatiquement avec un solde de 0 Ar.
-                        </p>
+                            <span
+                                class="inline-flex items-center px-4 rounded-l-2xl border-r border-slate-200 text-slate-500 bg-slate-50">
+                                <i class="bi bi-envelope"></i>
+                            </span>
+
+                            <input type="texte" id="username" name="username"
+                                class="block w-full pl-4 pr-4 py-3.5 bg-transparent border-0 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-0 text-sm font-semibold"
+                                placeholder="admin" value="admin" required autofocus>
+                        </div>
+                    </div>
+
+                    <!-- Mot de passe -->
+                    <div>
+                        <label for="password"
+                            class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+                            Mot de passe
+                        </label>
+
+                        <div
+                            class="relative flex rounded-2xl shadow-sm bg-slate-100/50 border border-slate-200/60 focus-within:bg-white focus-within:border-emerald-500 focus-within:ring-4 focus-within:ring-emerald-500/10 transition-all duration-200">
+
+                            <span
+                                class="inline-flex items-center px-4 rounded-l-2xl border-r border-slate-200 text-slate-500 bg-slate-50">
+                                <i class="bi bi-lock"></i>
+                            </span>
+
+                            <input type="password" id="password" name="password"
+                                class="block w-full pl-4 pr-4 py-3.5 bg-transparent border-0 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-0 text-sm font-semibold"
+                                placeholder="******" required value="admin123">
+                        </div>
                     </div>
 
                     <div class="pt-2">
                         <button type="submit"
                             class="w-full py-3.5 px-4 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-extrabold rounded-2xl transition duration-300 shadow-lg shadow-emerald-600/10 focus:outline-none focus:ring-4 focus:ring-emerald-500/20">
-                            Se connecter à l'espace
+                            Se connecter
                         </button>
+                    </div>
 
-                        <div class="mt-4 text-center">
-                            <a href="<?= base_url('login-operateur') ?>"
-                                class="text-sm font-semibold text-emerald-600 hover:text-emerald-700 hover:underline transition-colors">
-                                Se connecter en tant qu'opérateur
-                            </a>
-                        </div>
+                    <div class="mt-4 text-center">
+                        <a href="<?= base_url('login') ?>"
+                            class="text-sm font-semibold text-emerald-600 hover:text-emerald-700 hover:underline transition-colors">
+                            Se connecter en tant que client
+                        </a>
                     </div>
                 </form>
-
             </div>
 
         </div>

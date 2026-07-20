@@ -25,6 +25,10 @@ class ClientModel extends Model
             ->first();
     }
 
+    public function getClientsByTelephone($telephone)
+    {
+        return $this->where('telephone', $telephone)->first();
+    }
     /**
      * Récupère un client avec son compte via son numéro
      */
