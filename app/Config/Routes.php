@@ -20,6 +20,14 @@ $routes->group('client', ['filter' => 'auth'], function ($routes) {
     $routes->post('operation', 'ClientController::effectuerOperation');
 });
 
+$routes->group('operateur', ['filter' => 'auth'], function ($routes) {
+    $routes->get('dashboard', 'OperateurController::dashboard');
+    $routes->post('operation', 'OperateurController::comptes');
+    $routes->get('transactions', 'OperateurController::transactions');
+    $routes->get('gains', 'OperateurController::gains');
+
+});
+
 // Garder aussi les routes directes si vous préférez y accéder sans le préfixe /client/ dans l'URL
 $routes->get('client/login', 'AuthController::login');
 $routes->post('client/auth', 'AuthController::attemptLogin');

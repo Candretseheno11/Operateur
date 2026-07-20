@@ -39,7 +39,7 @@ git restore --source remotes/origin/davida app/Views/auth
 
 ### Partie Client
 
-- Login automatique
+- Login automatique (Model : CLient View : login)
 - Dashboard client
 - Consultation du solde
 - Dépôt
