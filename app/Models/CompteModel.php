@@ -22,6 +22,25 @@ class CompteModel extends Model
         return $this->where('id_client', $id_client)->first();
     }
 
+    public function crediter($id_compte, $montant)
+    {
+        $compte = $this->find($id_compte);
+        if ($compte) {
+            $nouveau_solde = $compte['solde'] + $montant;
+            return $this->update($id_compte, ['solde' => $nouveau_solde]);
+        }
+        return false;
+    }
+
+    public function debiter($id_compte, $montant)
+    {
+        $compte = $this->find($id_compte);
+        if ($compte && $compte['solde'] >= $montant) {
+            $nouveau_solde = $compte['solde'] - $montant;
+            return $this->update($id_compte, ['solde' => $nouveau_solde]);
+        }
+        return false;
+    }
     public function updateSolde($id_compte, $nouveau_solde)
     {
         return $this->update($id_compte, ['solde' => $nouveau_solde]);

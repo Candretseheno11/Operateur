@@ -55,4 +55,12 @@ class BaremeModel extends Model
             ->orderBy('baremes.montant_min', 'ASC')
             ->findAll();
     }
+
+    public function getBaremeForMontant($id_type_operation, $montant)
+    {
+        return $this->where('id_type_operation', $id_type_operation)
+            ->where('montant_min <=', $montant)
+            ->where('montant_max >=', $montant)
+            ->first();
+    }
 }

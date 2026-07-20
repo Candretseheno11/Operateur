@@ -13,29 +13,29 @@
         rel="stylesheet">
 
     <script>
-    tailwind.config = {
-        theme: {
-            extend: {
-                fontFamily: {
-                    sans: ['Plus Jakarta Sans', 'sans-serif']
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif']
+                    }
                 }
             }
         }
-    }
     </script>
     <style>
-    .no-scrollbar::-webkit-scrollbar {
-        display: none;
-    }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
 
-    .no-scrollbar {
-        -ms-overflow-style: none;
-        scrollbar-width: none;
-    }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
 
-    .modal-transition {
-        transition: opacity 0.25s ease-out, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-    }
+        .modal-transition {
+            transition: opacity 0.25s ease-out, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
     </style>
 </head>
 
@@ -153,7 +153,8 @@
                             <div class="text-xs text-indigo-200/60">
                                 <div>Numéro de compte lié</div>
                                 <div class="font-mono text-white/90 font-semibold mt-0.5">
-                                    <?= esc($client['telephone'] ?? '') ?></div>
+                                    <?= esc($client['telephone'] ?? '') ?>
+                                </div>
                             </div>
                             <div class="h-6 opacity-30"><i class="bi bi-credit-card-2-front text-2xl"></i></div>
                         </div>
@@ -184,7 +185,8 @@
                             class="flex flex-col items-center justify-center p-4 bg-white rounded-xl border border-slate-100 shadow-sm hover:border-indigo-400 hover:bg-slate-50 transition group focus:outline-none">
                             <div
                                 class="h-12 w-12 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-xl mb-2 group-hover:scale-105 transition-all">
-                                <i class="bi bi-box-arrow-in-down"></i></div>
+                                <i class="bi bi-box-arrow-in-down"></i>
+                            </div>
                             <span class="text-xs md:text-sm font-bold text-slate-700">Dépôt</span>
                             <span class="hidden sm:inline text-[10px] text-slate-400 mt-0.5">Automatique</span>
                         </button>
@@ -192,7 +194,8 @@
                             class="flex flex-col items-center justify-center p-4 bg-white rounded-xl border border-slate-100 shadow-sm hover:border-orange-400 hover:bg-slate-50 transition group focus:outline-none">
                             <div
                                 class="h-12 w-12 rounded-full bg-orange-50 text-orange-600 flex items-center justify-center text-xl mb-2 group-hover:scale-105 transition-all">
-                                <i class="bi bi-box-arrow-up"></i></div>
+                                <i class="bi bi-box-arrow-up"></i>
+                            </div>
                             <span class="text-xs md:text-sm font-bold text-slate-700">Retrait</span>
                             <span class="hidden sm:inline text-[10px] text-slate-400 mt-0.5">Automatique</span>
                         </button>
@@ -200,7 +203,8 @@
                             class="flex flex-col items-center justify-center p-4 bg-white rounded-xl border border-slate-100 shadow-sm hover:border-emerald-400 hover:bg-slate-50 transition group focus:outline-none">
                             <div
                                 class="h-12 w-12 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl mb-2 group-hover:scale-105 transition-all">
-                                <i class="bi bi-arrow-left-right"></i></div>
+                                <i class="bi bi-arrow-left-right"></i>
+                            </div>
                             <span class="text-xs md:text-sm font-bold text-slate-700">Transfert</span>
                             <span class="hidden sm:inline text-[10px] text-slate-400 mt-0.5">Vers un destinataire</span>
                         </button>
@@ -245,26 +249,29 @@
                             </thead>
                             <tbody id="txnTableBody" class="divide-y divide-slate-100 text-sm">
                                 <?php foreach ($transactions as $t): ?>
-                                <?php
-                                $estSortant = (int) $t['id_compte_source'] === (int) $compte['id'];
-                                $type = $t['type_operation'] ?? '';
-                            ?>
-                                <tr class="hover:bg-slate-50/50 transition" data-type="<?= esc($type) ?>"
-                                    data-search="<?= esc(strtolower($t['id'] . ' ' . $type)) ?>">
-                                    <td class="py-4 px-6 font-mono text-xs font-semibold text-slate-400">
-                                        TXN<?= str_pad((string) $t['id'], 6, '0', STR_PAD_LEFT) ?></td>
-                                    <td class="py-4 px-6"><span
-                                            class="font-bold text-slate-800"><?= esc(ucfirst($type)) ?></span></td>
-                                    <td class="py-4 px-6 text-xs text-slate-400 font-medium">
-                                        <?= number_format((float) $t['frais'], 2, ',', ' ') ?> Ar</td>
-                                    <td class="py-4 px-6 text-xs text-slate-400">
-                                        <?= date('d M H:i', strtotime($t['date_transaction'])) ?></td>
-                                    <td
-                                        class="py-4 px-6 text-right font-extrabold <?= $estSortant ? 'text-rose-600' : 'text-emerald-600' ?>">
-                                        <?= $estSortant ? '-' : '+' ?><?= number_format((float) $t['montant'], 2, ',', ' ') ?>
-                                        Ar
-                                    </td>
-                                </tr>
+                                    <?php
+                                    $estSortant = (int) $t['id_compte_source'] === (int) $compte['id'];
+                                    $type = $t['type_operation'] ?? '';
+                                    ?>
+                                    <tr class="hover:bg-slate-50/50 transition" data-type="<?= esc($type) ?>"
+                                        data-search="<?= esc(strtolower($t['id'] . ' ' . $type)) ?>">
+                                        <td class="py-4 px-6 font-mono text-xs font-semibold text-slate-400">
+                                            TXN<?= str_pad((string) $t['id'], 6, '0', STR_PAD_LEFT) ?></td>
+                                        <td class="py-4 px-6"><span
+                                                class="font-bold text-slate-800"><?= esc(ucfirst($type)) ?></span></td>
+                                        <td class="py-4 px-6 text-xs text-slate-400 font-medium">
+                                            <?= number_format((float) $t['frais'], 2, ',', ' ') ?> Ar
+                                        </td>
+                                        <td class="py-4 px-6 text-xs text-slate-400">
+                                            <?= date('d M H:i', strtotime($t['date_transaction'])) ?>
+                                        </td>
+                                        <td
+                                            class="py-4 px-6 text-right font-extrabold <?= $estSortant ? 'text-rose-600' : 'text-emerald-600' ?>">
+                                            <?= $estSortant ? '-' : '+' ?>
+                                            <?= number_format((float) $t['montant'], 2, ',', ' ') ?>
+                                            Ar
+                                        </td>
+                                    </tr>
                                 <?php endforeach; ?>
                             </tbody>
                         </table>
@@ -366,7 +373,8 @@
                             <div class="relative rounded-xl shadow-sm">
                                 <div
                                     class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-                                    <i class="bi bi-phone"></i></div>
+                                    <i class="bi bi-phone"></i>
+                                </div>
                                 <input type="text" id="phoneTransfert"
                                     class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-semibold"
                                     placeholder="ex: 0331234567" required>
@@ -424,161 +432,161 @@
     </div>
 
     <script>
-    // --- Jeton CSRF (nécessaire car les formulaires sont envoyés en AJAX / fetch) ---
-    const CSRF_NAME = document.querySelector('meta[name="csrf-token-name"]').content;
-    let csrfHash = document.querySelector('meta[name="csrf-token-hash"]').content;
+        // --- Jeton CSRF (nécessaire car les formulaires sont envoyés en AJAX / fetch) ---
+        const CSRF_NAME = document.querySelector('meta[name="csrf-token-name"]').content;
+        let csrfHash = document.querySelector('meta[name="csrf-token-hash"]').content;
 
-    let isSoldeVisible = true;
+        let isSoldeVisible = true;
 
-    function formatAriary(amount) {
-        return Number(amount).toLocaleString('fr-FR', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-        }) + " Ar";
-    }
-
-    function toggleSoldeVisibility() {
-        isSoldeVisible = !isSoldeVisible;
-        renderBalance();
-    }
-
-    function renderBalance() {
-        const soldeElement = document.getElementById('soldeClient');
-        const eyeIcon = document.getElementById('eyeIcon');
-        const solde = parseFloat(soldeElement.dataset.solde);
-
-        if (isSoldeVisible) {
-            soldeElement.textContent = formatAriary(solde);
-            eyeIcon.className = "bi bi-eye-slash-fill text-lg";
-        } else {
-            soldeElement.textContent = "• • • • • • Ar";
-            eyeIcon.className = "bi bi-eye-fill text-lg";
-        }
-    }
-
-    function setSolde(nouveauSolde) {
-        document.getElementById('soldeClient').dataset.solde = nouveauSolde;
-        renderBalance();
-    }
-
-    function openModal(id) {
-        const modal = document.getElementById(id);
-        modal.classList.remove('hidden');
-        setTimeout(() => {
-            const inner = modal.querySelector('.modal-transition');
-            inner.classList.remove('translate-y-full', 'sm:scale-95');
-            inner.classList.add('translate-y-0', 'sm:scale-100');
-        }, 10);
-    }
-
-    function closeModal(id) {
-        const modal = document.getElementById(id);
-        const inner = modal.querySelector('.modal-transition');
-        inner.classList.remove('translate-y-0', 'sm:scale-100');
-        inner.classList.add('translate-y-full', 'sm:scale-95');
-        setTimeout(() => modal.classList.add('hidden'), 200);
-    }
-
-    function showAlert(message, type = 'success') {
-        const alertContainer = document.getElementById('alertContainer');
-        const alertBox = document.getElementById('alertBox');
-        const alertIcon = document.getElementById('alertIcon');
-        const alertMessage = document.getElementById('alertMessage');
-
-        alertMessage.textContent = message;
-
-        if (type === 'success') {
-            alertBox.className =
-                "p-4 rounded-xl shadow-sm flex items-center justify-between gap-3 border bg-emerald-50 border-emerald-200 text-emerald-800";
-            alertIcon.className = "bi bi-check-circle-fill text-emerald-600";
-        } else {
-            alertBox.className =
-                "p-4 rounded-xl shadow-sm flex items-center justify-between gap-3 border bg-rose-50 border-rose-200 text-rose-800";
-            alertIcon.className = "bi bi-exclamation-triangle-fill text-rose-600";
+        function formatAriary(amount) {
+            return Number(amount).toLocaleString('fr-FR', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }) + " Ar";
         }
 
-        alertContainer.classList.remove('hidden');
-        setTimeout(() => alertContainer.classList.remove('translate-y-2', 'opacity-0'), 10);
-        setTimeout(() => dismissAlert(), 4000);
-    }
-
-    function dismissAlert() {
-        const alertContainer = document.getElementById('alertContainer');
-        alertContainer.classList.add('translate-y-2', 'opacity-0');
-        setTimeout(() => alertContainer.classList.add('hidden'), 300);
-    }
-
-    // Filtrage / recherche côté client sur les lignes déjà rendues par PHP
-    function filterTransactions() {
-        const query = document.getElementById('txnSearch').value.toLowerCase().trim();
-        const filterType = document.getElementById('txnFilter').value;
-        const rows = document.querySelectorAll('#txnTableBody tr');
-        let visibleCount = 0;
-
-        rows.forEach(row => {
-            const matchesQuery = query === '' || row.dataset.search.includes(query);
-            const matchesFilter = filterType === 'all' || row.dataset.type === filterType;
-            const visible = matchesQuery && matchesFilter;
-            row.classList.toggle('hidden', !visible);
-            if (visible) visibleCount++;
-        });
-
-        document.getElementById('noTxnState').classList.toggle('hidden', visibleCount !== 0);
-    }
-
-    // --- Appels réels au ClientController (remplace la simulation JS de la maquette) ---
-    async function handleFormSubmit(event, type) {
-        event.preventDefault();
-
-        const endpoints = {
-            depot: "<?= site_url('clients/depot') ?>",
-            retrait: "<?= site_url('clients/retrait') ?>",
-            transfert: "<?= site_url('clients/transfert') ?>",
-        };
-
-        const formData = new FormData();
-        formData.append(CSRF_NAME, csrfHash);
-
-        if (type === 'depot') {
-            formData.append('montant', document.getElementById('amountDepot').value);
-        } else if (type === 'retrait') {
-            formData.append('montant', document.getElementById('amountRetrait').value);
-        } else if (type === 'transfert') {
-            formData.append('telephone', document.getElementById('phoneTransfert').value);
-            formData.append('montant', document.getElementById('amountTransfert').value);
+        function toggleSoldeVisibility() {
+            isSoldeVisible = !isSoldeVisible;
+            renderBalance();
         }
 
-        try {
-            const response = await fetch(endpoints[type], {
-                method: 'POST',
-                body: formData
-            });
-            const data = await response.json();
+        function renderBalance() {
+            const soldeElement = document.getElementById('soldeClient');
+            const eyeIcon = document.getElementById('eyeIcon');
+            const solde = parseFloat(soldeElement.dataset.solde);
 
-            // CodeIgniter renouvelle le hash CSRF à chaque requête : on le met à jour
-            const newHash = response.headers.get('X-CSRF-TOKEN');
-            if (newHash) csrfHash = newHash;
-
-            if (data.success) {
-                showAlert(data.message, 'success');
-                setSolde(data.solde);
-                document.getElementById('form' + type.charAt(0).toUpperCase() + type.slice(1)).reset();
-                closeModal('modal' + type.charAt(0).toUpperCase() + type.slice(1));
-                // Recharge la page pour afficher la nouvelle transaction dans l'historique
-                setTimeout(() => window.location.reload(), 900);
+            if (isSoldeVisible) {
+                soldeElement.textContent = formatAriary(solde);
+                eyeIcon.className = "bi bi-eye-slash-fill text-lg";
             } else {
-                showAlert(data.message || 'Une erreur est survenue.', 'danger');
+                soldeElement.textContent = "• • • • • • Ar";
+                eyeIcon.className = "bi bi-eye-fill text-lg";
             }
-        } catch (err) {
-            showAlert('Erreur réseau, veuillez réessayer.', 'danger');
         }
-    }
 
-    document.addEventListener('DOMContentLoaded', () => {
-        renderBalance();
-        document.getElementById('txnSearch').addEventListener('input', filterTransactions);
-        document.getElementById('txnFilter').addEventListener('change', filterTransactions);
-    });
+        function setSolde(nouveauSolde) {
+            document.getElementById('soldeClient').dataset.solde = nouveauSolde;
+            renderBalance();
+        }
+
+        function openModal(id) {
+            const modal = document.getElementById(id);
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                const inner = modal.querySelector('.modal-transition');
+                inner.classList.remove('translate-y-full', 'sm:scale-95');
+                inner.classList.add('translate-y-0', 'sm:scale-100');
+            }, 10);
+        }
+
+        function closeModal(id) {
+            const modal = document.getElementById(id);
+            const inner = modal.querySelector('.modal-transition');
+            inner.classList.remove('translate-y-0', 'sm:scale-100');
+            inner.classList.add('translate-y-full', 'sm:scale-95');
+            setTimeout(() => modal.classList.add('hidden'), 200);
+        }
+
+        function showAlert(message, type = 'success') {
+            const alertContainer = document.getElementById('alertContainer');
+            const alertBox = document.getElementById('alertBox');
+            const alertIcon = document.getElementById('alertIcon');
+            const alertMessage = document.getElementById('alertMessage');
+
+            alertMessage.textContent = message;
+
+            if (type === 'success') {
+                alertBox.className =
+                    "p-4 rounded-xl shadow-sm flex items-center justify-between gap-3 border bg-emerald-50 border-emerald-200 text-emerald-800";
+                alertIcon.className = "bi bi-check-circle-fill text-emerald-600";
+            } else {
+                alertBox.className =
+                    "p-4 rounded-xl shadow-sm flex items-center justify-between gap-3 border bg-rose-50 border-rose-200 text-rose-800";
+                alertIcon.className = "bi bi-exclamation-triangle-fill text-rose-600";
+            }
+
+            alertContainer.classList.remove('hidden');
+            setTimeout(() => alertContainer.classList.remove('translate-y-2', 'opacity-0'), 10);
+            setTimeout(() => dismissAlert(), 4000);
+        }
+
+        function dismissAlert() {
+            const alertContainer = document.getElementById('alertContainer');
+            alertContainer.classList.add('translate-y-2', 'opacity-0');
+            setTimeout(() => alertContainer.classList.add('hidden'), 300);
+        }
+
+        // Filtrage / recherche côté client sur les lignes déjà rendues par PHP
+        function filterTransactions() {
+            const query = document.getElementById('txnSearch').value.toLowerCase().trim();
+            const filterType = document.getElementById('txnFilter').value;
+            const rows = document.querySelectorAll('#txnTableBody tr');
+            let visibleCount = 0;
+
+            rows.forEach(row => {
+                const matchesQuery = query === '' || row.dataset.search.includes(query);
+                const matchesFilter = filterType === 'all' || row.dataset.type === filterType;
+                const visible = matchesQuery && matchesFilter;
+                row.classList.toggle('hidden', !visible);
+                if (visible) visibleCount++;
+            });
+
+            document.getElementById('noTxnState').classList.toggle('hidden', visibleCount !== 0);
+        }
+
+        // --- Appels réels au ClientController (remplace la simulation JS de la maquette) ---
+        async function handleFormSubmit(event, type) {
+            event.preventDefault();
+
+            const endpoints = {
+                depot: "<?= site_url('client/depot') ?>",
+                retrait: "<?= site_url('client/retrait') ?>",
+                transfert: "<?= site_url('client/transfert') ?>",
+            };
+
+            const formData = new FormData();
+            formData.append(CSRF_NAME, csrfHash);
+
+            if (type === 'depot') {
+                formData.append('montant', document.getElementById('amountDepot').value);
+            } else if (type === 'retrait') {
+                formData.append('montant', document.getElementById('amountRetrait').value);
+            } else if (type === 'transfert') {
+                formData.append('telephone', document.getElementById('phoneTransfert').value);
+                formData.append('montant', document.getElementById('amountTransfert').value);
+            }
+
+            try {
+                const response = await fetch(endpoints[type], {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+
+                // CodeIgniter renouvelle le hash CSRF à chaque requête : on le met à jour
+                const newHash = response.headers.get('X-CSRF-TOKEN');
+                if (newHash) csrfHash = newHash;
+
+                if (data.success) {
+                    showAlert(data.message, 'success');
+                    setSolde(data.solde);
+                    document.getElementById('form' + type.charAt(0).toUpperCase() + type.slice(1)).reset();
+                    closeModal('modal' + type.charAt(0).toUpperCase() + type.slice(1));
+                    // Recharge la page pour afficher la nouvelle transaction dans l'historique
+                    setTimeout(() => window.location.reload(), 900);
+                } else {
+                    showAlert(data.message || 'Une erreur est survenue.', 'danger');
+                }
+            } catch (err) {
+                showAlert('Erreur réseau, veuillez réessayer.', 'danger');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderBalance();
+            document.getElementById('txnSearch').addEventListener('input', filterTransactions);
+            document.getElementById('txnFilter').addEventListener('change', filterTransactions);
+        });
     </script>
 
 </body>

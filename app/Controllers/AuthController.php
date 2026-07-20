@@ -31,17 +31,7 @@ class AuthController extends BaseController
         if (!$client) {
             return redirect()->back()->with('error', 'Aucun compte trouvé pour ce numéro de téléphone. Veuillez vous inscrire.');
         }
-        if ($client['role'] === 'operateur') {
-            $sessionData = [
-                'id' => $client['id'],
-                'telephone' => $client['telephone'],
-                'nom' => $client['nom'],
-                'id_compte' => $client['id_compte'] ?? null,
-                'solde' => $client['solde'] ?? 0.00,
-                'role' => $client['role']
-            ];
-            return redirect()->back()->with('error', 'Accès refusé. Veuillez utiliser le portail opérateur.');
-        }
+
         $role = $client['role'];
         // Stockage des données en session
         $sessionData = [
