@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Models\BaremeModel;
 use App\Models\ClientModel;
 use App\Models\CompteModel;
+use App\Models\PrefixeModel;
 use App\Models\TransactionsModel;
 use App\Models\TypeOperationModel;
 use RuntimeException;
@@ -18,7 +19,6 @@ use RuntimeException;
 class ClientController extends BaseController
 {
     // Libellés attendus dans la table `types_operations`.
-    // Si les libellés réels en base sont différents, adapte ces constantes.
     private const LIBELLE_DEPOT = 'Depot';
     private const LIBELLE_RETRAIT = 'Retrait';
     private const LIBELLE_TRANSFERT = 'Transfert';
@@ -28,7 +28,7 @@ class ClientController extends BaseController
     private ClientModel $clientModel;
     private TypeOperationModel $typeOperationModel;
     private BaremeModel $baremeModel;
-    private \App\Models\PrefixeModel $prefixeModel;
+    private PrefixeModel $prefixeModel;
 
     public function __construct()
     {
@@ -37,7 +37,7 @@ class ClientController extends BaseController
         $this->clientModel = new ClientModel();
         $this->typeOperationModel = new TypeOperationModel();
         $this->baremeModel = new BaremeModel();
-        $this->prefixeModel = new \App\Models\PrefixeModel();
+        $this->prefixeModel = new PrefixeModel();
     }
 
     /**
@@ -116,7 +116,7 @@ class ClientController extends BaseController
         $db->transComplete();
 
         if ($db->transStatus() === false) {
-            log_message('error', 'Echec dépôt compte ' . $compte['id'] . ' : ' . json_encode($db->error()));
+            log_message('error', 'Échec dépôt compte ' . $compte['id'] . ' : ' . json_encode($db->error()));
             return $this->jsonError('Une erreur est survenue lors du dépôt.');
         }
 
@@ -180,7 +180,7 @@ class ClientController extends BaseController
         $db->transComplete();
 
         if ($db->transStatus() === false || !$debitOk) {
-            log_message('error', 'Echec retrait compte ' . $compte['id'] . ' : ' . json_encode($db->error()));
+            log_message('error', 'Échec retrait compte ' . $compte['id'] . ' : ' . json_encode($db->error()));
             return $this->jsonError('Une erreur est survenue lors du retrait.');
         }
 
@@ -193,7 +193,7 @@ class ClientController extends BaseController
 
     /**
      * Transfert vers un ou plusieurs clients, identifiés par leur numéro de téléphone.
-     * Frais déterminé par le barème (id_type_operation + tranche de montant).
+     * Frais déterminé par le barème + supplément éventuel si autre opérateur.
      */
     public function transfert()
     {
@@ -220,12 +220,12 @@ class ClientController extends BaseController
         } catch (RuntimeException $e) {
             return $this->jsonError($e->getMessage());
         }
+
         $nombreDestinataires = count($telephones);
         $montantParDestinataire = $montantTotal / $nombreDestinataires;
 
         // Récupérer le préfixe du client source
         $clientSource = session()->get('client');
-        $prefixeSource = substr($clientSource['telephone'], 0, 3);
 
         // Vérifier tous les destinataires d'abord
         $destinataires = [];
@@ -236,8 +236,6 @@ class ClientController extends BaseController
                 return $this->jsonError("Numéro de téléphone {$tel} invalide.");
             }
 
-            $prefixeDest = substr($tel, 0, 3);
-            
             $clientDest = $this->clientModel->getClientByTelephone($tel);
             if (!$clientDest || empty($clientDest['id_compte'])) {
                 return $this->jsonError("Aucun compte actif ne correspond au numéro {$tel}.");
@@ -251,16 +249,16 @@ class ClientController extends BaseController
             $estAutreOperateur = $prefixeDestData && $prefixeDestData['est_autre_operateur'] == 1;
 
             try {
-                $frais = $this->calculerFrais($idTypeTransfert, $montantParDestinataire);
+                $fraisBase = $this->calculerFrais($idTypeTransfert, $montantParDestinataire);
                 $fraisPromotion = 0;
-                
-                // Ajouter les frais de promotion si autre opérateur
+
+                // Ajouter les frais de promotion/supplément si autre opérateur
                 if ($estAutreOperateur && $prefixeDestData) {
-                    $fraisPromotion = ($montantParDestinataire * $prefixeDestData['pourcentage_extra']) / 100;
-                    $frais += $fraisPromotion;
+                    $fraisPromotion = ($montantParDestinataire * (float) $prefixeDestData['pourcentage_extra']) / 100;
                 }
-                
-                $totalFrais += $frais;
+
+                $fraisTotalPartiel = $fraisBase + $fraisPromotion;
+                $totalFrais += $fraisTotalPartiel;
             } catch (RuntimeException $e) {
                 return $this->jsonError($e->getMessage());
             }
@@ -268,8 +266,8 @@ class ClientController extends BaseController
             $destinataires[] = [
                 'telephone' => $tel,
                 'client' => $clientDest,
-                'frais' => $frais,
-                'frais_promotion' => $fraisPromotion ?? 0,
+                'frais' => $fraisTotalPartiel,
+                'frais_promotion' => $fraisPromotion,
                 'est_autre_operateur' => $estAutreOperateur
             ];
         }
@@ -279,7 +277,7 @@ class ClientController extends BaseController
         $db = \Config\Database::connect();
         $db->transStart();
 
-        // Collecter tous les IDs de comptes à verrouiller
+        // Collecter tous les IDs de comptes à verrouiller pour éviter un interblocage (deadlock)
         $idsComptes = [$compteSource['id']];
         foreach ($destinataires as $dest) {
             $idsComptes[] = $dest['client']['id_compte'];
@@ -287,7 +285,7 @@ class ClientController extends BaseController
         $idsComptes = array_unique($idsComptes);
         sort($idsComptes);
 
-        // Verrouiller les comptes dans l'ordre
+        // Verrouiller les comptes dans l'ordre croissant des IDs
         foreach ($idsComptes as $idCompte) {
             $this->compteModel->getCompteForUpdate($idCompte);
         }
@@ -314,7 +312,7 @@ class ClientController extends BaseController
                         'montant' => $montantParDestinataire,
                         'date_transaction' => date('Y-m-d H:i:s'),
                         'frais' => $dest['frais'],
-                        'frais_promotion' => $dest['frais_promotion'] ?? 0,
+                        'frais_promotion' => $dest['frais_promotion'],
                     ]);
                 }
             }
@@ -323,7 +321,7 @@ class ClientController extends BaseController
         $db->transComplete();
 
         if ($db->transStatus() === false || !$debitOk) {
-            log_message('error', 'Echec transfert multiple : ' . json_encode($db->error()));
+            log_message('error', 'Échec transfert multiple : ' . json_encode($db->error()));
             return $this->jsonError('Une erreur est survenue lors du transfert.');
         }
 
@@ -382,8 +380,6 @@ class ClientController extends BaseController
 
     /**
      * Résout l'ID d'un type d'opération à partir de son libellé.
-     * Lève une exception claire si le libellé n'existe pas en base
-     * (mauvaise config, plutôt que d'insérer une transaction avec un ID invalide).
      */
     private function getTypeOperationId(string $libelle): int
     {
@@ -398,7 +394,6 @@ class ClientController extends BaseController
 
     /**
      * Calcule le frais applicable via le barème (id_type_operation + tranche de montant).
-     * Lève une exception si aucun palier ne couvre ce montant.
      */
     private function calculerFrais(int $idTypeOperation, float $montant): float
     {
@@ -411,6 +406,9 @@ class ClientController extends BaseController
         return (float) $bareme['frais'];
     }
 
+    /**
+     * Retourne une réponse JSON d'erreur formatée.
+     */
     private function jsonError(string $message, int $statusCode = 400)
     {
         return $this->response->setStatusCode($statusCode)->setJSON([

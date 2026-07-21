@@ -25,6 +25,7 @@ $routes->group('client', ['filter' => 'auth'], function ($routes) {
 
     $routes->post('depot', 'ClientController::depot');
     $routes->post('retrait', 'ClientController::retrait');
+    $routes->post('epargne', 'ClientController::configurerEpargne', ['filter' => 'auth']);
     $routes->post('transfert', 'ClientController::transfert');
 });
 

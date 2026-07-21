@@ -342,10 +342,42 @@ INSERT INTO
     )
 VALUES
     -- --- Dépôts & Retraits sur 034 et 038 ---
-    (NULL, 13, 1, 500000, 1500, 0, '2026-07-16 08:00:00'), -- Dépôt vers 034
-    (NULL, 15, 1, 300000, 1500, 0, '2026-07-16 09:30:00'), -- Dépôt vers 038
-    (14, NULL, 2, 100000, 800, 0, '2026-07-16 11:15:00'), -- Retrait depuis 034
-    (16, NULL, 2, 250000, 1500, 0, '2026-07-16 14:00:00'), -- Retrait depuis 038
+    (
+        NULL,
+        13,
+        1,
+        500000,
+        1500,
+        0,
+        '2026-07-16 08:00:00'
+    ), -- Dépôt vers 034
+    (
+        NULL,
+        15,
+        1,
+        300000,
+        1500,
+        0,
+        '2026-07-16 09:30:00'
+    ), -- Dépôt vers 038
+    (
+        14,
+        NULL,
+        2,
+        100000,
+        800,
+        0,
+        '2026-07-16 11:15:00'
+    ), -- Retrait depuis 034
+    (
+        16,
+        NULL,
+        2,
+        250000,
+        1500,
+        0,
+        '2026-07-16 14:00:00'
+    ), -- Retrait depuis 038
     -- --- Transactions depuis 033 vers 034 et 038 ---
     (5, 13, 3, 50000, 400, 0, '2026-07-17 10:00:00'), -- 033 (Jean) -> 034 (Soa)
     (5, 15, 3, 100000, 800, 0, '2026-07-17 10:30:00'), -- 033 (Jean) -> 038 (Bako)
@@ -362,7 +394,18 @@ VALUES
     (16, 14, 3, 150000, 1500, 0, '2026-07-20 14:50:00');
 
 -- 038 (Haja) -> 034 (Koto)
-
 -- ALTER TABLE TRANSACTIONS - Ajouter colonne frais_promotion
 -- sqlite3 database/mobilemoney.db
 -- ALTER TABLE transactions ADD COLUMN frais_promotion NUMERIC DEFAULT 0;
+CREATE TABLE
+    comptes_epargne (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id_compte INTEGER NOT NULL UNIQUE,
+        solde REAL NOT NULL DEFAULT 0,
+        pourcentage REAL NOT NULL DEFAULT 0 CHECK (
+            pourcentage >= 0
+            AND pourcentage <= 100
+        ),
+        actif INTEGER NOT NULL DEFAULT 1,
+        FOREIGN KEY (id_compte) REFERENCES comptes (id)
+    );

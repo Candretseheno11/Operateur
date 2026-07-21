@@ -13,29 +13,29 @@
         rel="stylesheet">
 
     <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Plus Jakarta Sans', 'sans-serif']
-                    }
+    tailwind.config = {
+        theme: {
+            extend: {
+                fontFamily: {
+                    sans: ['Plus Jakarta Sans', 'sans-serif']
                 }
             }
         }
+    }
     </script>
     <style>
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
 
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
+    .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
 
-        .modal-transition {
-            transition: opacity 0.25s ease-out, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-        }
+    .modal-transition {
+        transition: opacity 0.25s ease-out, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
     </style>
 </head>
 
@@ -249,29 +249,29 @@
                             </thead>
                             <tbody id="txnTableBody" class="divide-y divide-slate-100 text-sm">
                                 <?php foreach ($transactions as $t): ?>
-                                    <?php
+                                <?php
                                     $estSortant = (int) $t['id_compte_source'] === (int) $compte['id'];
                                     $type = $t['type_operation'] ?? '';
                                     ?>
-                                    <tr class="hover:bg-slate-50/50 transition" data-type="<?= esc($type) ?>"
-                                        data-search="<?= esc(strtolower($t['id'] . ' ' . $type)) ?>">
-                                        <td class="py-4 px-6 font-mono text-xs font-semibold text-slate-400">
-                                            TXN<?= str_pad((string) $t['id'], 6, '0', STR_PAD_LEFT) ?></td>
-                                        <td class="py-4 px-6"><span
-                                                class="font-bold text-slate-800"><?= esc(ucfirst($type)) ?></span></td>
-                                        <td class="py-4 px-6 text-xs text-slate-400 font-medium">
-                                            <?= number_format((float) $t['frais'], 2, ',', ' ') ?> Ar
-                                        </td>
-                                        <td class="py-4 px-6 text-xs text-slate-400">
-                                            <?= date('d M H:i', strtotime($t['date_transaction'])) ?>
-                                        </td>
-                                        <td
-                                            class="py-4 px-6 text-right font-extrabold <?= $estSortant ? 'text-rose-600' : 'text-emerald-600' ?>">
-                                            <?= $estSortant ? '-' : '+' ?>
-                                            <?= number_format((float) $t['montant'], 2, ',', ' ') ?>
-                                            Ar
-                                        </td>
-                                    </tr>
+                                <tr class="hover:bg-slate-50/50 transition" data-type="<?= esc($type) ?>"
+                                    data-search="<?= esc(strtolower($t['id'] . ' ' . $type)) ?>">
+                                    <td class="py-4 px-6 font-mono text-xs font-semibold text-slate-400">
+                                        TXN<?= str_pad((string) $t['id'], 6, '0', STR_PAD_LEFT) ?></td>
+                                    <td class="py-4 px-6"><span
+                                            class="font-bold text-slate-800"><?= esc(ucfirst($type)) ?></span></td>
+                                    <td class="py-4 px-6 text-xs text-slate-400 font-medium">
+                                        <?= number_format((float) $t['frais'], 2, ',', ' ') ?> Ar
+                                    </td>
+                                    <td class="py-4 px-6 text-xs text-slate-400">
+                                        <?= date('d M H:i', strtotime($t['date_transaction'])) ?>
+                                    </td>
+                                    <td
+                                        class="py-4 px-6 text-right font-extrabold <?= $estSortant ? 'text-rose-600' : 'text-emerald-600' ?>">
+                                        <?= $estSortant ? '-' : '+' ?>
+                                        <?= number_format((float) $t['montant'], 2, ',', ' ') ?>
+                                        Ar
+                                    </td>
+                                </tr>
                                 <?php endforeach; ?>
                             </tbody>
                         </table>
@@ -369,7 +369,8 @@
                     <form id="formTransfert" onsubmit="handleFormSubmit(event, 'transfert')" class="p-6 space-y-4">
                         <div id="recipientsContainer">
                             <div class="flex items-center gap-2">
-                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Numéros
+                                <label
+                                    class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Numéros
                                     de téléphone destinataires</label>
                                 <button type="button" onclick="addRecipient()"
                                     class="text-xs font-semibold text-emerald-600 hover:text-emerald-700 mb-1.5">
@@ -382,7 +383,8 @@
                                         class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
                                         <i class="bi bi-phone"></i>
                                     </div>
-                                    <input type="text" class="phone-input w-full pl-10 pr-12 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-semibold"
+                                    <input type="text"
+                                        class="phone-input w-full pl-10 pr-12 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-semibold"
                                         placeholder="ex: 0331234567" required>
                                     <button type="button" onclick="removeRecipient(this)"
                                         class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-red-500">
@@ -391,10 +393,12 @@
                                 </div>
                             </div>
                         </div>
-                        <p class="text-[10px] text-slate-400 font-medium">Doit commencer par le même préfixe que votre numéro (même opérateur) : 032, 033, 034, 037, ou 038.</p>
+                        <p class="text-[10px] text-slate-400 font-medium">Doit commencer par un préfixe valide (ex: 032,
+                            033, 034, 037, 038).</p>
                         <div>
                             <label
-                                class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Montant total
+                                class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Montant
+                                total
                                 à transférer (Ar)</label>
                             <div class="relative rounded-xl shadow-sm">
                                 <input type="number" id="amountTransfert" min="100" step="1"
@@ -405,7 +409,8 @@
                                     Ar</div>
                             </div>
                         </div>
-                        <div class="rounded-xl border border-emerald-100 bg-emerald-50/70 px-4 py-3 text-sm text-slate-700 space-y-1">
+                        <div
+                            class="rounded-xl border border-emerald-100 bg-emerald-50/70 px-4 py-3 text-sm text-slate-700 space-y-1">
                             <div class="flex items-center justify-between gap-3">
                                 <span class="font-medium text-slate-500">Destinataires</span>
                                 <span id="transferRecipientsCount" class="font-bold text-slate-800">1</span>
@@ -418,9 +423,11 @@
                         <div class="flex items-center gap-2">
                             <input type="checkbox" id="includeFees"
                                 class="w-4 h-4 text-emerald-600 bg-gray-100 border-gray-300 rounded focus:ring-emerald-500">
-                            <label for="includeFees" class="text-sm font-medium text-slate-700">Inclure les frais dans le montant</label>
+                            <label for="includeFees" class="text-sm font-medium text-slate-700">Inclure les frais dans
+                                le montant</label>
                         </div>
-                        <p class="text-[10px] text-slate-400">Si coché, le montant total est divisé par le nombre de destinataires. Les frais seront déduits de votre solde en plus.</p>
+                        <p class="text-[10px] text-slate-400">Si coché, le montant total est divisé par le nombre de
+                            destinataires. Les frais seront déduits de votre solde en plus.</p>
                         <div class="pt-4 flex gap-3">
                             <button type="button" onclick="closeModal('modalTransfert')"
                                 class="flex-1 py-3 text-sm font-semibold text-slate-500 bg-slate-50 rounded-xl hover:bg-slate-100 transition">Annuler</button>
@@ -457,101 +464,100 @@
     </div>
 
     <script>
-        // --- Jeton CSRF (nécessaire car les formulaires sont envoyés en AJAX / fetch) ---
-        const CSRF_NAME = document.querySelector('meta[name="csrf-token-name"]').content;
-        let csrfHash = document.querySelector('meta[name="csrf-token-hash"]').content;
+    const CSRF_NAME = document.querySelector('meta[name="csrf-token-name"]').content;
+    let csrfHash = document.querySelector('meta[name="csrf-token-hash"]').content;
 
-        let isSoldeVisible = true;
-        let recipientIndex = 1;
+    let isSoldeVisible = true;
+    let recipientIndex = 1;
 
-        function formatAriary(amount) {
-            return Number(amount).toLocaleString('fr-FR', {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-            }) + " Ar";
+    function formatAriary(amount) {
+        return Number(amount).toLocaleString('fr-FR', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }) + " Ar";
+    }
+
+    function toggleSoldeVisibility() {
+        isSoldeVisible = !isSoldeVisible;
+        renderBalance();
+    }
+
+    function renderBalance() {
+        const soldeElement = document.getElementById('soldeClient');
+        const eyeIcon = document.getElementById('eyeIcon');
+        const solde = parseFloat(soldeElement.dataset.solde);
+
+        if (isSoldeVisible) {
+            soldeElement.textContent = formatAriary(solde);
+            eyeIcon.className = "bi bi-eye-slash-fill text-lg";
+        } else {
+            soldeElement.textContent = "• • • • • • Ar";
+            eyeIcon.className = "bi bi-eye-fill text-lg";
         }
+    }
 
-        function toggleSoldeVisibility() {
-            isSoldeVisible = !isSoldeVisible;
-            renderBalance();
-        }
+    function setSolde(nouveauSolde) {
+        document.getElementById('soldeClient').dataset.solde = nouveauSolde;
+        renderBalance();
+    }
 
-        function renderBalance() {
-            const soldeElement = document.getElementById('soldeClient');
-            const eyeIcon = document.getElementById('eyeIcon');
-            const solde = parseFloat(soldeElement.dataset.solde);
-
-            if (isSoldeVisible) {
-                soldeElement.textContent = formatAriary(solde);
-                eyeIcon.className = "bi bi-eye-slash-fill text-lg";
-            } else {
-                soldeElement.textContent = "• • • • • • Ar";
-                eyeIcon.className = "bi bi-eye-fill text-lg";
-            }
-        }
-
-        function setSolde(nouveauSolde) {
-            document.getElementById('soldeClient').dataset.solde = nouveauSolde;
-            renderBalance();
-        }
-
-        function openModal(id) {
-            const modal = document.getElementById(id);
-            modal.classList.remove('hidden');
-            setTimeout(() => {
-                const inner = modal.querySelector('.modal-transition');
-                inner.classList.remove('translate-y-full', 'sm:scale-95');
-                inner.classList.add('translate-y-0', 'sm:scale-100');
-            }, 10);
-
-            if (id === 'modalTransfert') {
-                updateTransferPreview();
-            }
-        }
-
-        function closeModal(id) {
-            const modal = document.getElementById(id);
+    function openModal(id) {
+        const modal = document.getElementById(id);
+        modal.classList.remove('hidden');
+        setTimeout(() => {
             const inner = modal.querySelector('.modal-transition');
-            inner.classList.remove('translate-y-0', 'sm:scale-100');
-            inner.classList.add('translate-y-full', 'sm:scale-95');
-            setTimeout(() => modal.classList.add('hidden'), 200);
+            inner.classList.remove('translate-y-full', 'sm:scale-95');
+            inner.classList.add('translate-y-0', 'sm:scale-100');
+        }, 10);
+
+        if (id === 'modalTransfert') {
+            updateTransferPreview();
+        }
+    }
+
+    function closeModal(id) {
+        const modal = document.getElementById(id);
+        const inner = modal.querySelector('.modal-transition');
+        inner.classList.remove('translate-y-0', 'sm:scale-100');
+        inner.classList.add('translate-y-full', 'sm:scale-95');
+        setTimeout(() => modal.classList.add('hidden'), 200);
+    }
+
+    function showAlert(message, type = 'success') {
+        const alertContainer = document.getElementById('alertContainer');
+        const alertBox = document.getElementById('alertBox');
+        const alertIcon = document.getElementById('alertIcon');
+        const alertMessage = document.getElementById('alertMessage');
+
+        alertMessage.textContent = message;
+
+        if (type === 'success') {
+            alertBox.className =
+                "p-4 rounded-xl shadow-sm flex items-center justify-between gap-3 border bg-emerald-50 border-emerald-200 text-emerald-800";
+            alertIcon.className = "bi bi-check-circle-fill text-emerald-600";
+        } else {
+            alertBox.className =
+                "p-4 rounded-xl shadow-sm flex items-center justify-between gap-3 border bg-rose-50 border-rose-200 text-rose-800";
+            alertIcon.className = "bi bi-exclamation-triangle-fill text-rose-600";
         }
 
-        function showAlert(message, type = 'success') {
-            const alertContainer = document.getElementById('alertContainer');
-            const alertBox = document.getElementById('alertBox');
-            const alertIcon = document.getElementById('alertIcon');
-            const alertMessage = document.getElementById('alertMessage');
+        alertContainer.classList.remove('hidden');
+        setTimeout(() => alertContainer.classList.remove('translate-y-2', 'opacity-0'), 10);
+        setTimeout(() => dismissAlert(), 4000);
+    }
 
-            alertMessage.textContent = message;
+    function dismissAlert() {
+        const alertContainer = document.getElementById('alertContainer');
+        alertContainer.classList.add('translate-y-2', 'opacity-0');
+        setTimeout(() => alertContainer.classList.add('hidden'), 300);
+    }
 
-            if (type === 'success') {
-                alertBox.className =
-                    "p-4 rounded-xl shadow-sm flex items-center justify-between gap-3 border bg-emerald-50 border-emerald-200 text-emerald-800";
-                alertIcon.className = "bi bi-check-circle-fill text-emerald-600";
-            } else {
-                alertBox.className =
-                    "p-4 rounded-xl shadow-sm flex items-center justify-between gap-3 border bg-rose-50 border-rose-200 text-rose-800";
-                alertIcon.className = "bi bi-exclamation-triangle-fill text-rose-600";
-            }
-
-            alertContainer.classList.remove('hidden');
-            setTimeout(() => alertContainer.classList.remove('translate-y-2', 'opacity-0'), 10);
-            setTimeout(() => dismissAlert(), 4000);
-        }
-
-        function dismissAlert() {
-            const alertContainer = document.getElementById('alertContainer');
-            alertContainer.classList.add('translate-y-2', 'opacity-0');
-            setTimeout(() => alertContainer.classList.add('hidden'), 300);
-        }
-
-        function addRecipient() {
-            const container = document.getElementById('recipientsContainer');
-            const newGroup = document.createElement('div');
-            newGroup.className = 'recipient-group mt-3';
-            newGroup.dataset.index = recipientIndex;
-            newGroup.innerHTML = `
+    function addRecipient() {
+        const container = document.getElementById('recipientsContainer');
+        const newGroup = document.createElement('div');
+        newGroup.className = 'recipient-group mt-3';
+        newGroup.dataset.index = recipientIndex;
+        newGroup.innerHTML = `
                 <div class="relative rounded-xl shadow-sm">
                     <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
                         <i class="bi bi-phone"></i>
@@ -564,126 +570,122 @@
                     </button>
                 </div>
             `;
-            container.appendChild(newGroup);
-            recipientIndex++;
+        container.appendChild(newGroup);
+        recipientIndex++;
+        updateTransferPreview();
+    }
+
+    function removeRecipient(button) {
+        const container = document.getElementById('recipientsContainer');
+        const groups = container.querySelectorAll('.recipient-group');
+        if (groups.length > 1) {
+            button.closest('.recipient-group').remove();
             updateTransferPreview();
+        } else {
+            showAlert('Vous devez avoir au moins un destinataire', 'danger');
         }
+    }
 
-        function removeRecipient(button) {
-            const container = document.getElementById('recipientsContainer');
-            const groups = container.querySelectorAll('.recipient-group');
-            if (groups.length > 1) {
-                button.closest('.recipient-group').remove();
-                updateTransferPreview();
-            } else {
-                showAlert('Vous devez avoir au moins un destinataire', 'danger');
-            }
-        }
+    function getTransferRecipientCount() {
+        return document.querySelectorAll('#recipientsContainer .recipient-group').length;
+    }
 
-        function getTransferRecipientCount() {
-            return document.querySelectorAll('#recipientsContainer .recipient-group').length;
-        }
+    function updateTransferPreview() {
+        const amountInput = document.getElementById('amountTransfert');
+        const amount = parseFloat(amountInput.value) || 0;
+        const recipientsCount = getTransferRecipientCount();
+        const amountPerRecipient = recipientsCount > 0 ? amount / recipientsCount : 0;
 
-        function updateTransferPreview() {
-            const amountInput = document.getElementById('amountTransfert');
-            const amount = parseFloat(amountInput.value) || 0;
-            const recipientsCount = getTransferRecipientCount();
-            const amountPerRecipient = recipientsCount > 0 ? amount / recipientsCount : 0;
+        document.getElementById('transferRecipientsCount').textContent = recipientsCount;
+        document.getElementById('transferAmountPerRecipient').textContent = formatAriary(amountPerRecipient);
+    }
 
-            document.getElementById('transferRecipientsCount').textContent = recipientsCount;
-            document.getElementById('transferAmountPerRecipient').textContent = formatAriary(amountPerRecipient);
-        }
+    function filterTransactions() {
+        const query = document.getElementById('txnSearch').value.toLowerCase().trim();
+        const filterType = document.getElementById('txnFilter').value;
+        const rows = document.querySelectorAll('#txnTableBody tr');
+        let visibleCount = 0;
 
-        // Filtrage / recherche côté client sur les lignes déjà rendues par PHP
-        function filterTransactions() {
-            const query = document.getElementById('txnSearch').value.toLowerCase().trim();
-            const filterType = document.getElementById('txnFilter').value;
-            const rows = document.querySelectorAll('#txnTableBody tr');
-            let visibleCount = 0;
-
-            rows.forEach(row => {
-                const matchesQuery = query === '' || row.dataset.search.includes(query);
-                const matchesFilter = filterType === 'all' || row.dataset.type === filterType;
-                const visible = matchesQuery && matchesFilter;
-                row.classList.toggle('hidden', !visible);
-                if (visible) visibleCount++;
-            });
-
-            document.getElementById('noTxnState').classList.toggle('hidden', visibleCount !== 0);
-        }
-
-        // --- Appels réels au ClientController (remplace la simulation JS de la maquette) ---
-        async function handleFormSubmit(event, type) {
-            event.preventDefault();
-
-            const endpoints = {
-                depot: "<?= site_url('client/depot') ?>",
-                retrait: "<?= site_url('client/retrait') ?>",
-                transfert: "<?= site_url('client/transfert') ?>",
-            };
-
-            const formData = new FormData();
-            formData.append(CSRF_NAME, csrfHash);
-
-            if (type === 'depot') {
-                formData.append('montant', document.getElementById('amountDepot').value);
-            } else if (type === 'retrait') {
-                formData.append('montant', document.getElementById('amountRetrait').value);
-            } else if (type === 'transfert') {
-                // Collect all phone numbers
-                const phoneInputs = document.querySelectorAll('.phone-input');
-                const phones = [];
-                phoneInputs.forEach(input => {
-                    if (input.value.trim()) phones.push(input.value.trim());
-                });
-                formData.append('telephones', JSON.stringify(phones));
-                formData.append('montant', document.getElementById('amountTransfert').value);
-                formData.append('includeFees', document.getElementById('includeFees').checked ? '1' : '0');
-            }
-
-            try {
-                const response = await fetch(endpoints[type], {
-                    method: 'POST',
-                    body: formData
-                });
-                const data = await response.json();
-
-                // CodeIgniter renouvelle le hash CSRF à chaque requête : on le met à jour
-                const newHash = response.headers.get('X-CSRF-TOKEN');
-                if (newHash) csrfHash = newHash;
-
-                if (data.success) {
-                    showAlert(data.message, 'success');
-                    setSolde(data.solde);
-                    document.getElementById('form' + type.charAt(0).toUpperCase() + type.slice(1)).reset();
-                    // Reset recipients container to 1
-                    const container = document.getElementById('recipientsContainer');
-                    const groups = container.querySelectorAll('.recipient-group');
-                    groups.forEach((group, index) => {
-                        if (index > 0) group.remove();
-                    });
-                    recipientIndex = 1;
-                    updateTransferPreview();
-                    closeModal('modal' + type.charAt(0).toUpperCase() + type.slice(1));
-                    // Recharge la page pour afficher la nouvelle transaction dans l'historique
-                    setTimeout(() => window.location.reload(), 900);
-                } else {
-                    showAlert(data.message || 'Une erreur est survenue.', 'danger');
-                }
-            } catch (err) {
-                showAlert('Erreur réseau, veuillez réessayer.', 'danger');
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            renderBalance();
-            document.getElementById('txnSearch').addEventListener('input', filterTransactions);
-            document.getElementById('txnFilter').addEventListener('change', filterTransactions);
-            document.getElementById('amountTransfert').addEventListener('input', updateTransferPreview);
-            document.getElementById('includeFees').addEventListener('change', updateTransferPreview);
-            document.getElementById('recipientsContainer').addEventListener('input', updateTransferPreview);
-            updateTransferPreview();
+        rows.forEach(row => {
+            const matchesQuery = query === '' || row.dataset.search.includes(query);
+            const matchesFilter = filterType === 'all' || row.dataset.type === filterType;
+            const visible = matchesQuery && matchesFilter;
+            row.classList.toggle('hidden', !visible);
+            if (visible) visibleCount++;
         });
+
+        document.getElementById('noTxnState').classList.toggle('hidden', visibleCount !== 0);
+    }
+
+    async function handleFormSubmit(event, type) {
+        event.preventDefault();
+
+        const endpoints = {
+            depot: "<?= site_url('client/depot') ?>",
+            retrait: "<?= site_url('client/retrait') ?>",
+            transfert: "<?= site_url('client/transfert') ?>",
+        };
+
+        const formData = new FormData();
+        formData.append(CSRF_NAME, csrfHash);
+
+        if (type === 'depot') {
+            formData.append('montant', document.getElementById('amountDepot').value);
+        } else if (type === 'retrait') {
+            formData.append('montant', document.getElementById('amountRetrait').value);
+        } else if (type === 'transfert') {
+            const phoneInputs = document.querySelectorAll('.phone-input');
+            const phones = [];
+            phoneInputs.forEach(input => {
+                if (input.value.trim()) phones.push(input.value.trim());
+            });
+            formData.append('telephones', JSON.stringify(phones));
+            formData.append('montant', document.getElementById('amountTransfert').value);
+            formData.append('includeFees', document.getElementById('includeFees').checked ? '1' : '0');
+        }
+
+        try {
+            const response = await fetch(endpoints[type], {
+                method: 'POST',
+                body: formData
+            });
+            const data = await response.json();
+
+            const newHash = response.headers.get('X-CSRF-TOKEN');
+            if (newHash) csrfHash = newHash;
+
+            if (data.success) {
+                showAlert(data.message, 'success');
+                setSolde(data.solde);
+                document.getElementById('form' + type.charAt(0).toUpperCase() + type.slice(1)).reset();
+
+                const container = document.getElementById('recipientsContainer');
+                const groups = container.querySelectorAll('.recipient-group');
+                groups.forEach((group, index) => {
+                    if (index > 0) group.remove();
+                });
+                recipientIndex = 1;
+                updateTransferPreview();
+                closeModal('modal' + type.charAt(0).toUpperCase() + type.slice(1));
+
+                setTimeout(() => window.location.reload(), 900);
+            } else {
+                showAlert(data.message || 'Une erreur est survenue.', 'danger');
+            }
+        } catch (err) {
+            showAlert('Erreur réseau, veuillez réessayer.', 'danger');
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        renderBalance();
+        document.getElementById('txnSearch').addEventListener('input', filterTransactions);
+        document.getElementById('txnFilter').addEventListener('change', filterTransactions);
+        document.getElementById('amountTransfert').addEventListener('input', updateTransferPreview);
+        document.getElementById('includeFees').addEventListener('change', updateTransferPreview);
+        document.getElementById('recipientsContainer').addEventListener('input', updateTransferPreview);
+        updateTransferPreview();
+    });
     </script>
 
 </body>
