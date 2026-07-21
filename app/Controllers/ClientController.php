@@ -90,7 +90,7 @@ class ClientController extends BaseController
         }
 
         try {
-            $idTypeDepot = 1;
+            $idTypeDepot = $this->getTypeOperationId(self::LIBELLE_DEPOT);
             $frais = $this->calculerFrais($idTypeDepot, $montant);
         } catch (RuntimeException $e) {
             return $this->jsonError($e->getMessage());
@@ -141,7 +141,7 @@ class ClientController extends BaseController
         }
 
         try {
-            $idTypeRetrait = 2;
+            $idTypeRetrait = $this->getTypeOperationId(self::LIBELLE_RETRAIT);
             $frais = $this->calculerFrais($idTypeRetrait, $montant);
         } catch (RuntimeException $e) {
             return $this->jsonError($e->getMessage());
@@ -211,7 +211,11 @@ class ClientController extends BaseController
             return $this->jsonError('Compte introuvable.');
         }
 
-        $idTypeTransfert = 3;
+        try {
+            $idTypeTransfert = $this->getTypeOperationId(self::LIBELLE_TRANSFERT);
+        } catch (RuntimeException $e) {
+            return $this->jsonError($e->getMessage());
+        }
         $nombreDestinataires = count($telephones);
         $montantParDestinataire = $montantTotal / $nombreDestinataires;
 

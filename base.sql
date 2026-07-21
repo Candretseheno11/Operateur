@@ -7,7 +7,9 @@ CREATE TABLE
     prefixes (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         prefixe TEXT NOT NULL UNIQUE,
-        actif INTEGER NOT NULL DEFAULT 1
+        actif INTEGER NOT NULL DEFAULT 1,
+        est_autre_operateur INTEGER NOT NULL DEFAULT 0,
+        pourcentage_extra NUMERIC DEFAULT 0.0
     );
 
 --------------------------------------------------
@@ -358,11 +360,3 @@ VALUES
     (16, 14, 3, 150000, 1500, '2026-07-20 14:50:00');
 
 -- 038 (Haja) -> 034 (Koto)
-Alter table prefixes
-add column nom varchar(50);
-
-update prefixes
-set
-    nom = 'Telma'
-where
-    est_autre_operateur = 1;
