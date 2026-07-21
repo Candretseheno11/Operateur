@@ -51,4 +51,12 @@ $routes->group('operateur', ['filter' => 'role'], function ($routes) {
     $routes->post('prefixes/update/(:num)', 'OperateurController::updatePrefix/$1');
 
     $routes->get('prefixes/delete/(:num)', 'OperateurController::deletePrefix/$1');
+
+    // --- GESTION DES PROMOTIONS ---
+    $routes->get('promotions', 'PromotionController::index');
+    $routes->get('promotions/add', 'PromotionController::add');
+    $routes->post('promotions/create', 'PromotionController::create');
+    $routes->get('promotions/edit/(:num)', 'PromotionController::edit/$1');
+    $routes->post('promotions/update/(:num)', 'PromotionController::update/$1');
+    $routes->get('promotions/delete/(:num)', 'PromotionController::delete/$1');
 });

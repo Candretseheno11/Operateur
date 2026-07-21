@@ -8,7 +8,7 @@ class TransactionsModel extends Model
 {
     protected $table = 'transactions';
     protected $primaryKey = 'id';
-    protected $allowedFields = ['id_compte_source', 'id_compte_destination', 'id_type_operation', 'montant', 'date_transaction', 'frais'];
+    protected $allowedFields = ['id_compte_source', 'id_compte_destination', 'id_type_operation', 'montant', 'date_transaction', 'frais', 'frais_promotion'];
     protected $useTimestamps = false;
 
     private TypeOperationModel $typeOperationModel;

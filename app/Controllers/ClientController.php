@@ -28,6 +28,7 @@ class ClientController extends BaseController
     private ClientModel $clientModel;
     private TypeOperationModel $typeOperationModel;
     private BaremeModel $baremeModel;
+    private \App\Models\PrefixeModel $prefixeModel;
 
     public function __construct()
     {
@@ -36,6 +37,7 @@ class ClientController extends BaseController
         $this->clientModel = new ClientModel();
         $this->typeOperationModel = new TypeOperationModel();
         $this->baremeModel = new BaremeModel();
+        $this->prefixeModel = new \App\Models\PrefixeModel();
     }
 
     /**
@@ -108,6 +110,7 @@ class ClientController extends BaseController
             'montant' => $montant,
             'date_transaction' => date('Y-m-d H:i:s'),
             'frais' => $frais,
+            'frais_promotion' => 0,
         ]);
 
         $db->transComplete();
@@ -170,6 +173,7 @@ class ClientController extends BaseController
                 'montant' => $montant,
                 'date_transaction' => date('Y-m-d H:i:s'),
                 'frais' => $frais,
+                'frais_promotion' => 0,
             ]);
         }
 
@@ -233,10 +237,7 @@ class ClientController extends BaseController
             }
 
             $prefixeDest = substr($tel, 0, 3);
-            if ($prefixeDest !== $prefixeSource) {
-                return $this->jsonError("Transfert uniquement vers le même opérateur seulement (préfixe {$prefixeSource}). Numéro {$tel} a le préfixe {$prefixeDest}.");
-            }
-
+            
             $clientDest = $this->clientModel->getClientByTelephone($tel);
             if (!$clientDest || empty($clientDest['id_compte'])) {
                 return $this->jsonError("Aucun compte actif ne correspond au numéro {$tel}.");
@@ -245,8 +246,20 @@ class ClientController extends BaseController
                 return $this->jsonError("Vous ne pouvez pas transférer vers votre propre compte ({$tel}).");
             }
 
+            // Vérifier si le destinataire est sur un autre opérateur
+            $prefixeDestData = $this->prefixeModel->getPrefixeByNumber($tel);
+            $estAutreOperateur = $prefixeDestData && $prefixeDestData['est_autre_operateur'] == 1;
+
             try {
                 $frais = $this->calculerFrais($idTypeTransfert, $montantParDestinataire);
+                $fraisPromotion = 0;
+                
+                // Ajouter les frais de promotion si autre opérateur
+                if ($estAutreOperateur && $prefixeDestData) {
+                    $fraisPromotion = ($montantParDestinataire * $prefixeDestData['pourcentage_extra']) / 100;
+                    $frais += $fraisPromotion;
+                }
+                
                 $totalFrais += $frais;
             } catch (RuntimeException $e) {
                 return $this->jsonError($e->getMessage());
@@ -255,7 +268,9 @@ class ClientController extends BaseController
             $destinataires[] = [
                 'telephone' => $tel,
                 'client' => $clientDest,
-                'frais' => $frais
+                'frais' => $frais,
+                'frais_promotion' => $fraisPromotion ?? 0,
+                'est_autre_operateur' => $estAutreOperateur
             ];
         }
 
@@ -299,6 +314,7 @@ class ClientController extends BaseController
                         'montant' => $montantParDestinataire,
                         'date_transaction' => date('Y-m-d H:i:s'),
                         'frais' => $dest['frais'],
+                        'frais_promotion' => $dest['frais_promotion'] ?? 0,
                     ]);
                 }
             }

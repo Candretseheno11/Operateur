@@ -55,6 +55,13 @@
                     <span class="badge bg-danger ms-auto rounded-pill"><?= $pending_count ?></span>
                 <?php endif; ?>
             </a>
+
+            <a href="/operateur/promotions"
+                class="nav-link-custom <?= current_url(true)->getSegment(2) == 'promotions' ? 'active' : '' ?>">
+                <i class="bi bi-percent"></i>
+                <span>Promotions</span>
+            </a>
+
             <div class="menu-label mt-4">Système</div>
 
             <a href="/logout" class="nav-link-custom text-danger">
