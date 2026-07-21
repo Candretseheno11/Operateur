@@ -63,8 +63,16 @@
                     <label class="form-label small fw-bold text-uppercase text-muted">Type d'opération</label>
                     <select id="filterType" class="form-select bg-light border-0">
                         <option value="all">Tous les types</option>
-                        <option value="1">Transfert</option>
-                        <option value="2">Retrait</option>
+                        <?php foreach ($baremes as $b): ?>
+                            <?php if (!isset($typeLibelles[$b['id_type_operation']])): ?>
+                                <?php $typeLibelles[$b['id_type_operation']] = $b['type_libelle']; ?>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
+                        <?php if (isset($typeLibelles)): ?>
+                            <?php foreach ($typeLibelles as $id => $libelle): ?>
+                                <option value="<?= $id ?>"><?= $libelle ?></option>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
                     </select>
                 </div>
 
@@ -105,8 +113,8 @@
                         <?php if (!empty($baremes)): ?>
                         <?php foreach ($baremes as $index => $b): ?>
                         <?php
-                                $isTransfert = ($b['id_type_operation'] == 1);
-                                $typeName = $isTransfert ? 'Transfert' : 'Retrait';
+                                $typeName = $b['type_libelle'] ?? 'Inconnu';
+                                $isTransfert = (strtolower($typeName) === 'transfert');
                                 $badgeClass = $isTransfert ? 'bg-info bg-opacity-10 text-info border-info' : 'bg-success bg-opacity-10 text-success border-success';
                                 $iconClass = $isTransfert ? 'bi-arrow-left-right' : 'bi-cash-stack';
                                 ?>

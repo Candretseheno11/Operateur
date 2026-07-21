@@ -9,7 +9,7 @@ class TypeOperationModel extends Model
     protected $table = 'types_operations';
     protected $primaryKey = 'id';
     protected $allowedFields = ['libelle'];
-    protected $useTimestamps = true;
+    protected $useTimestamps = false;
 
     public function getTypeOperationById($id)
     {

@@ -33,10 +33,11 @@
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Type d'opération</label>
                             <select name="id_type_operation" class="form-select" required>
-                                <option value="1" <?= $bareme['id_type_operation'] == 1 ? 'selected' : '' ?>>Transfert
-                                </option>
-                                <option value="2" <?= $bareme['id_type_operation'] == 2 ? 'selected' : '' ?>>Retrait
-                                </option>
+                                <?php foreach ($typesOperations as $type): ?>
+                                    <option value="<?= $type['id'] ?>" <?= $bareme['id_type_operation'] == $type['id'] ? 'selected' : '' ?>>
+                                        <?= $type['libelle'] ?>
+                                    </option>
+                                <?php endforeach; ?>
                             </select>
                         </div>
 

@@ -8,8 +8,22 @@ class TransactionsModel extends Model
 {
     protected $table = 'transactions';
     protected $primaryKey = 'id';
-    protected $allowedFields = ['id_compte_source', 'id_compte_destination', 'id_type_operation', 'montant', 'date_transaction', 'frais'];
-    protected $useTimestamps = true;
+    protected $allowedFields = ['id_compte_source', 'id_compte_destination', 'id_type_operation', 'montant', 'date_transaction', 'frais', 'frais_promotion'];
+    protected $useTimestamps = false;
+
+    private TypeOperationModel $typeOperationModel;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->typeOperationModel = new TypeOperationModel();
+    }
+
+    private function getTypeIdByLibelle(string $libelle): ?int
+    {
+        $id = $this->typeOperationModel->getIdByLibelle($libelle);
+        return $id ? (int) $id : null;
+    }
 
     public function getTransactionsByCompte($id_compte)
     {
@@ -34,32 +48,42 @@ class TransactionsModel extends Model
 
     public function getGainByTransfert()
     {
-        return $this->selectSum('frais')->where('id_type_operation', 3)->first();
+        $id = $this->getTypeIdByLibelle('Transfert');
+        return $id ? $this->selectSum('frais')->where('id_type_operation', $id)->first() : null;
     }
 
     public function getGainByRetrait()
     {
-        return $this->selectSum('frais')->where('id_type_operation', 2)->first();
+        $id = $this->getTypeIdByLibelle('Retrait');
+        return $id ? $this->selectSum('frais')->where('id_type_operation', $id)->first() : null;
     }
 
     public function getGainByTransfertForOperatorType(int $isOtherOperator): array
     {
+        $id = $this->getTypeIdByLibelle('Transfert');
+        if (!$id) {
+            return ['frais' => 0];
+        }
         return $this->selectSum('transactions.frais', 'frais')
             ->join('comptes as compte_destination', 'compte_destination.id = transactions.id_compte_destination', 'left')
             ->join('clients as client_destination', 'client_destination.id = compte_destination.id_client', 'left')
             ->join('prefixes', 'prefixes.id = client_destination.id_prefixe', 'left')
-            ->where('transactions.id_type_operation', 3)
+            ->where('transactions.id_type_operation', $id)
             ->where('prefixes.est_autre_operateur', $isOtherOperator)
             ->first();
     }
 
     public function getTransferGainBreakdown(): array
     {
+        $id = $this->getTypeIdByLibelle('Transfert');
+        if (!$id) {
+            return [];
+        }
         return $this->select('prefixes.prefixe, prefixes.est_autre_operateur, COALESCE(SUM(transactions.frais), 0) as total_frais, COALESCE(SUM(transactions.montant), 0) as total_montant')
             ->join('comptes as compte_destination', 'compte_destination.id = transactions.id_compte_destination', 'left')
             ->join('clients as client_destination', 'client_destination.id = compte_destination.id_client', 'left')
             ->join('prefixes', 'prefixes.id = client_destination.id_prefixe', 'left')
-            ->where('transactions.id_type_operation', 3)
+            ->where('transactions.id_type_operation', $id)
             ->groupBy('prefixes.id, prefixes.prefixe, prefixes.est_autre_operateur')
             ->orderBy('prefixes.prefixe', 'ASC')
             ->findAll();
@@ -71,7 +95,10 @@ class TransactionsModel extends Model
      */
     public function getGainBreakdownByPrefix(): array
     {
-        $retraits = $this->select("
+        $idRetrait = $this->getTypeIdByLibelle('Retrait');
+        $idTransfert = $this->getTypeIdByLibelle('Transfert');
+        
+        $retraits = $idRetrait ? $this->select("
                 prefixes.id as prefixe_id,
                 prefixes.prefixe as prefixe,
                 prefixes.est_autre_operateur as est_autre_operateur,
@@ -82,11 +109,11 @@ class TransactionsModel extends Model
             ->join('comptes as compte_source', 'compte_source.id = transactions.id_compte_source', 'left')
             ->join('clients as client_source', 'client_source.id = compte_source.id_client', 'left')
             ->join('prefixes', 'prefixes.id = client_source.id_prefixe', 'left')
-            ->where('transactions.id_type_operation', 2)
+            ->where('transactions.id_type_operation', $idRetrait)
             ->groupBy('prefixes.id, prefixes.prefixe, prefixes.est_autre_operateur')
-            ->findAll();
+            ->findAll() : [];
 
-        $transferts = $this->select("
+        $transferts = $idTransfert ? $this->select("
                 prefixes.id as prefixe_id,
                 prefixes.prefixe as prefixe,
                 prefixes.est_autre_operateur as est_autre_operateur,
@@ -97,9 +124,9 @@ class TransactionsModel extends Model
             ->join('comptes as compte_destination', 'compte_destination.id = transactions.id_compte_destination', 'left')
             ->join('clients as client_destination', 'client_destination.id = compte_destination.id_client', 'left')
             ->join('prefixes', 'prefixes.id = client_destination.id_prefixe', 'left')
-            ->where('transactions.id_type_operation', 3)
+            ->where('transactions.id_type_operation', $idTransfert)
             ->groupBy('prefixes.id, prefixes.prefixe, prefixes.est_autre_operateur')
-            ->findAll();
+            ->findAll() : [];
 
         $merged = [];
 
@@ -150,18 +177,26 @@ class TransactionsModel extends Model
 
     public function getGainByTransfertByPrefixeId($prefixe_id)
     {
+        $id = $this->getTypeIdByLibelle('Transfert');
+        if (!$id) {
+            return null;
+        }
         return $this->selectSum('frais')
             ->join('comptes', 'comptes.id = transactions.id_compte_source')
-            ->where('id_type_operation', 3)
+            ->where('id_type_operation', $id)
             ->where('comptes.id_client LIKE', $prefixe_id . '%')
             ->first();
     }
 
     public function getGainByRetraitByPrefixeId($prefixe_id)
     {
+        $id = $this->getTypeIdByLibelle('Retrait');
+        if (!$id) {
+            return null;
+        }
         return $this->selectSum('frais')
             ->join('comptes', 'comptes.id = transactions.id_compte_source')
-            ->where('id_type_operation', 2)
+            ->where('id_type_operation', $id)
             ->where('comptes.id_client LIKE', $prefixe_id . '%')
             ->first();
     }

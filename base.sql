@@ -7,7 +7,9 @@ CREATE TABLE
     prefixes (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         prefixe TEXT NOT NULL UNIQUE,
-        actif INTEGER NOT NULL DEFAULT 1
+        actif INTEGER NOT NULL DEFAULT 1,
+        est_autre_operateur INTEGER NOT NULL DEFAULT 0,
+        pourcentage_extra NUMERIC DEFAULT 0.0
     );
 
 --------------------------------------------------
@@ -69,6 +71,7 @@ CREATE TABLE
         id_type_operation INTEGER NOT NULL,
         montant NUMERIC NOT NULL,
         frais NUMERIC NOT NULL,
+        frais_promotion NUMERIC DEFAULT 0,
         date_transaction DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (id_compte_source) REFERENCES comptes (id),
         FOREIGN KEY (id_compte_destination) REFERENCES comptes (id),
@@ -334,35 +337,32 @@ INSERT INTO
         id_type_operation,
         montant,
         frais,
+        frais_promotion,
         date_transaction
     )
 VALUES
     -- --- Dépôts & Retraits sur 034 et 038 ---
-    (NULL, 13, 1, 500000, 1500, '2026-07-16 08:00:00'), -- Dépôt vers 034
-    (NULL, 15, 1, 300000, 1500, '2026-07-16 09:30:00'), -- Dépôt vers 038
-    (14, NULL, 2, 100000, 800, '2026-07-16 11:15:00'), -- Retrait depuis 034
-    (16, NULL, 2, 250000, 1500, '2026-07-16 14:00:00'), -- Retrait depuis 038
+    (NULL, 13, 1, 500000, 1500, 0, '2026-07-16 08:00:00'), -- Dépôt vers 034
+    (NULL, 15, 1, 300000, 1500, 0, '2026-07-16 09:30:00'), -- Dépôt vers 038
+    (14, NULL, 2, 100000, 800, 0, '2026-07-16 11:15:00'), -- Retrait depuis 034
+    (16, NULL, 2, 250000, 1500, 0, '2026-07-16 14:00:00'), -- Retrait depuis 038
     -- --- Transactions depuis 033 vers 034 et 038 ---
-    (5, 13, 3, 50000, 400, '2026-07-17 10:00:00'), -- 033 (Jean) -> 034 (Soa)
-    (5, 15, 3, 100000, 800, '2026-07-17 10:30:00'), -- 033 (Jean) -> 038 (Bako)
-    (17, 14, 3, 200000, 1500, '2026-07-17 11:45:00'), -- 033 (Vola) -> 034 (Koto)
-    (17, 16, 3, 500000, 2500, '2026-07-17 15:20:00'), -- 033 (Vola) -> 038 (Haja)
+    (5, 13, 3, 50000, 400, 0, '2026-07-17 10:00:00'), -- 033 (Jean) -> 034 (Soa)
+    (5, 15, 3, 100000, 800, 0, '2026-07-17 10:30:00'), -- 033 (Jean) -> 038 (Bako)
+    (17, 14, 3, 200000, 1500, 0, '2026-07-17 11:45:00'), -- 033 (Vola) -> 034 (Koto)
+    (17, 16, 3, 500000, 2500, 0, '2026-07-17 15:20:00'), -- 033 (Vola) -> 038 (Haja)
     -- --- Transactions internes à 034 (034 <-> 034) ---
-    (13, 14, 3, 30000, 400, '2026-07-18 09:10:00'), -- 034 (Soa) -> 034 (Koto)
-    (14, 13, 3, 15000, 200, '2026-07-18 16:00:00'), -- 034 (Koto) -> 034 (Soa)
+    (13, 14, 3, 30000, 400, 0, '2026-07-18 09:10:00'), -- 034 (Soa) -> 034 (Koto)
+    (14, 13, 3, 15000, 200, 0, '2026-07-18 16:00:00'), -- 034 (Koto) -> 034 (Soa)
     -- --- Transactions internes à 038 (038 <-> 038) ---
-    (15, 16, 3, 80000, 800, '2026-07-19 08:45:00'), -- 038 (Bako) -> 038 (Haja)
-    (16, 15, 3, 40000, 400, '2026-07-19 13:30:00'), -- 038 (Haja) -> 038 (Bako)
+    (15, 16, 3, 80000, 800, 0, '2026-07-19 08:45:00'), -- 038 (Bako) -> 038 (Haja)
+    (16, 15, 3, 40000, 400, 0, '2026-07-19 13:30:00'), -- 038 (Haja) -> 038 (Bako)
     -- --- Transactions croisées entre 034 et 038 ---
-    (13, 15, 3, 20000, 200, '2026-07-20 10:05:00'), -- 034 (Soa) -> 038 (Bako)
-    (16, 14, 3, 150000, 1500, '2026-07-20 14:50:00');
+    (13, 15, 3, 20000, 200, 0, '2026-07-20 10:05:00'), -- 034 (Soa) -> 038 (Bako)
+    (16, 14, 3, 150000, 1500, 0, '2026-07-20 14:50:00');
 
 -- 038 (Haja) -> 034 (Koto)
-Alter table prefixes
-add column nom varchar(50);
 
-update prefixes
-set
-    nom = 'Telma'
-where
-    est_autre_operateur = 1;
+-- ALTER TABLE TRANSACTIONS - Ajouter colonne frais_promotion
+-- sqlite3 database/mobilemoney.db
+-- ALTER TABLE transactions ADD COLUMN frais_promotion NUMERIC DEFAULT 0;
