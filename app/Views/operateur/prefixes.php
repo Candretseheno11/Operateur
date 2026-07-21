@@ -119,6 +119,8 @@
         </div>
     </div>
 
+    <?= $pager->links('default', 'bootstrap_full') ?>
+
 </div>
 
 <?= $this->endSection() ?>

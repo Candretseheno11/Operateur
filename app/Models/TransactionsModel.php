@@ -65,6 +65,89 @@ class TransactionsModel extends Model
             ->findAll();
     }
 
+    /**
+     * Statistiques complètes par préfixe : retraits (basés sur le compte source)
+     * et transferts (basés sur le compte destination), fusionnés par préfixe.
+     */
+    public function getGainBreakdownByPrefix(): array
+    {
+        $retraits = $this->select("
+                prefixes.id as prefixe_id,
+                prefixes.prefixe as prefixe,
+                prefixes.est_autre_operateur as est_autre_operateur,
+                COALESCE(SUM(transactions.frais), 0) as total_frais_retrait,
+                COALESCE(SUM(transactions.montant), 0) as total_montant_retrait,
+                COUNT(transactions.id) as nombre_retrait
+            ")
+            ->join('comptes as compte_source', 'compte_source.id = transactions.id_compte_source', 'left')
+            ->join('clients as client_source', 'client_source.id = compte_source.id_client', 'left')
+            ->join('prefixes', 'prefixes.id = client_source.id_prefixe', 'left')
+            ->where('transactions.id_type_operation', 2)
+            ->groupBy('prefixes.id, prefixes.prefixe, prefixes.est_autre_operateur')
+            ->findAll();
+
+        $transferts = $this->select("
+                prefixes.id as prefixe_id,
+                prefixes.prefixe as prefixe,
+                prefixes.est_autre_operateur as est_autre_operateur,
+                COALESCE(SUM(transactions.frais), 0) as total_frais_transfert,
+                COALESCE(SUM(transactions.montant), 0) as total_montant_transfert,
+                COUNT(transactions.id) as nombre_transfert
+            ")
+            ->join('comptes as compte_destination', 'compte_destination.id = transactions.id_compte_destination', 'left')
+            ->join('clients as client_destination', 'client_destination.id = compte_destination.id_client', 'left')
+            ->join('prefixes', 'prefixes.id = client_destination.id_prefixe', 'left')
+            ->where('transactions.id_type_operation', 3)
+            ->groupBy('prefixes.id, prefixes.prefixe, prefixes.est_autre_operateur')
+            ->findAll();
+
+        $merged = [];
+
+        foreach ($retraits as $r) {
+            $key = $r['prefixe_id'] ?? 'inconnu';
+            $merged[$key] = [
+                'prefixe' => $r['prefixe'] ?? 'N/A',
+                'est_autre_operateur' => $r['est_autre_operateur'] ?? 0,
+                'total_frais_retrait' => (float) $r['total_frais_retrait'],
+                'total_montant_retrait' => (float) $r['total_montant_retrait'],
+                'nombre_retrait' => (int) $r['nombre_retrait'],
+                'total_frais_transfert' => 0.0,
+                'total_montant_transfert' => 0.0,
+                'nombre_transfert' => 0,
+            ];
+        }
+
+        foreach ($transferts as $t) {
+            $key = $t['prefixe_id'] ?? 'inconnu';
+            if (!isset($merged[$key])) {
+                $merged[$key] = [
+                    'prefixe' => $t['prefixe'] ?? 'N/A',
+                    'est_autre_operateur' => $t['est_autre_operateur'] ?? 0,
+                    'total_frais_retrait' => 0.0,
+                    'total_montant_retrait' => 0.0,
+                    'nombre_retrait' => 0,
+                    'total_frais_transfert' => 0.0,
+                    'total_montant_transfert' => 0.0,
+                    'nombre_transfert' => 0,
+                ];
+            }
+            $merged[$key]['total_frais_transfert'] = (float) $t['total_frais_transfert'];
+            $merged[$key]['total_montant_transfert'] = (float) $t['total_montant_transfert'];
+            $merged[$key]['nombre_transfert'] = (int) $t['nombre_transfert'];
+        }
+
+        foreach ($merged as &$row) {
+            $row['total_frais'] = $row['total_frais_retrait'] + $row['total_frais_transfert'];
+            $row['total_montant'] = $row['total_montant_retrait'] + $row['total_montant_transfert'];
+            $row['nombre_transactions'] = $row['nombre_retrait'] + $row['nombre_transfert'];
+        }
+        unset($row);
+
+        usort($merged, fn($a, $b) => strcmp((string) $a['prefixe'], (string) $b['prefixe']));
+
+        return array_values($merged);
+    }
+
     public function getGainByTransfertByPrefixeId($prefixe_id)
     {
         return $this->selectSum('frais')

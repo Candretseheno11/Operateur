@@ -82,6 +82,7 @@ class OperateurController extends BaseController
         $gainTransfertOperateur = $this->transactionModel->getGainByTransfertForOperatorType(0);
         $gainTransfertAutresOperateurs = $this->transactionModel->getGainByTransfertForOperatorType(1);
         $gainBreakdown = $this->transactionModel->getTransferGainBreakdown();
+        $gainBreakdownByPrefix = $this->transactionModel->getGainBreakdownByPrefix();
 
         $data = [
             'gainRetrait' => $gainRetrait['frais'] ?? 0,
@@ -90,6 +91,7 @@ class OperateurController extends BaseController
             'gainTransfertAutresOperateurs' => $gainTransfertAutresOperateurs['frais'] ?? 0,
             'gainTotal' => ($gainRetrait['frais'] ?? 0) + ($gainTransfert['frais'] ?? 0),
             'gainBreakdown' => $gainBreakdown,
+            'gainBreakdownByPrefix' => $gainBreakdownByPrefix,
         ];
 
         return view('operateur/gains', $data);
@@ -98,12 +100,15 @@ class OperateurController extends BaseController
     public function bareme()
     {
         $baremeModel = new BaremeModel();
-        $baremes = $baremeModel->getAllBaremesWithOperations();
+        $baremes = $baremeModel->getAllBaremesWithOperations(10);
 
         return view('operateur/bareme', [
-            'baremes' => $baremes
+            'baremes' => $baremes,
+            'pager' => $baremeModel->pager
         ]);
     }
+
+
 
 
     // Traitement de la mise à jour d'un barème (Modal)
@@ -230,12 +235,15 @@ class OperateurController extends BaseController
     public function prefixes()
     {
         $prefixeModel = new PrefixeModel();
-        $prefixes = $prefixeModel->findAll();
+        $prefixes = $prefixeModel->paginate(10);
 
         return view('operateur/prefixes', [
-            'prefixes' => $prefixes
+            'prefixes' => $prefixes,
+            'pager' => $prefixeModel->pager
         ]);
     }
+
+
 
     public function addPrefix()
     {

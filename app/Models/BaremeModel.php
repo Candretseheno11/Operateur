@@ -47,14 +47,19 @@ class BaremeModel extends Model
     }
     // Dans App\Models\BaremeModel.php
 
-    public function getAllBaremesWithOperations()
+    public function getAllBaremesWithOperations($perPage = null)
     {
-        return $this->select('baremes.*, types_operations.libelle as type_libelle')
+        $builder = $this->select('baremes.*, types_operations.libelle as type_libelle')
             ->join('types_operations', 'types_operations.id = baremes.id_type_operation', 'left')
             ->orderBy('baremes.id_type_operation', 'ASC')
-            ->orderBy('baremes.montant_min', 'ASC')
-            ->findAll();
+            ->orderBy('baremes.montant_min', 'ASC');
+
+        return $perPage === null
+            ? $builder->findAll()
+            : $builder->paginate($perPage);
     }
+
+
 
     public function getBaremeForMontant($id_type_operation, $montant)
     {
